@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:ai_prompt_organizer/ai_prompt_organizer.dart';
 import 'package:path/path.dart';
 
-
 class DBUtil {
   static Future<Directory> getDatabaseFolder() async {
     final exeFolderPath = File(Platform.resolvedExecutable).parent.path;
@@ -35,6 +34,6 @@ class DBUtil {
       return imgFilePath;
     }
 
-    return Future.error("Image not found.");
+    return Future.error(ErrorMessage.imageNotFound);
   }
 }

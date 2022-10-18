@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:realm/realm.dart';
 
+import '../ai_prompt_organizer.dart';
 import '../model/schema/prompt.dart';
 import '../util/db_util.dart';
 
@@ -45,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          pickImage();
+          pickImage(context);
         },
         tooltip: '画像を追加',
         child: const Icon(Icons.add),
@@ -53,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<void> pickImage() async {
+  Future<void> pickImage(BuildContext context) async {
     final filePaths = await FilePicker.platform.pickFiles(
       type: FileType.image,
       allowMultiple: false,
@@ -63,8 +64,15 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     for (var item in filePaths.paths) {
       if (item != null) {
-        setState(() {
-          saveImage(item);
+        setState(() async {
+          try {
+            await saveImage(item);
+          } catch(e) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(e.toString()),
+              duration: const Duration(seconds: 3),
+            ));
+          }
         });
       }
     }
@@ -87,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final imgDir = await DBUtil.getImageFolder();
     final targetImgPath = "${imgDir.path}/${basename(imagePath)}";
     if (await File(targetImgPath).exists()) {
-      return Future.error("The file with the same name exists.");
+      return Future.error(ErrorMessage.fileExists + basename(imagePath));
     }
 
     await originalFile.copy(targetImgPath);
