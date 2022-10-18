@@ -26,7 +26,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<bool> loadPromptFromDB() async {
     final repository = await PromptRepository.getInstance();
 
-    // TODO: DB変更後のリスナーを設定
+    repository.streamController.stream.listen((event) {
+      setState(() {
+        promptList = event.toList();
+      });
+    });
 
     final list = repository.getAllPrompts();
     if (list != null) {
@@ -143,16 +147,16 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     for (var item in filePaths.paths) {
       if (item != null) {
-        setState(() async {
-          try {
-            await saveImage(item);
-          } catch(e) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(e.toString()),
-              duration: const Duration(seconds: 3),
-            ));
-          }
-        });
+        try {
+          await saveImage(item);
+        } catch(e) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(e.toString()),
+            duration: const Duration(seconds: 3),
+          ));
+        }
+        setState(() {});
       }
     }
   }
