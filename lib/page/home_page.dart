@@ -20,9 +20,23 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Prompt> promptList = List.empty();
+  List<Prompt> promptList = List.empty();
   final List<String> imagePathList = List.empty();
-  final int _counter = 0;
+
+  final promptTextController = TextEditingController();
+
+  Future<bool> loadPromptFromDB() async {
+    final repository = await PromptRepository.getInstance();
+
+    // TODO: DB変更後のリスナーを設定
+
+    final list = repository.getAllPrompts();
+    if (list != null) {
+      promptList = list;
+      return true;
+    }
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,19 +44,28 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
+      body: FutureBuilder(
+        future: loadPromptFromDB(),
+        builder: ((context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data!) {
+              return ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: promptList.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: buildPromptWidget(promptList[index]),
+                  );
+                }
+              );
+            } else {
+              return const Text(ErrorMessage.dbReadingError);
+            }
+          } else {
+            return const Text(StateMessage.dbReading);
+          }
+        })
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -51,6 +74,54 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: '画像を追加',
         child: const Icon(Icons.add),
       ),
+    );
+  }
+
+  Widget buildPromptWidget(Prompt prompt) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(width: double.infinity),
+            SizedBox(
+              width: 200,
+              child: Stack(
+                alignment: Alignment.topLeft,
+                children: [
+                  FutureBuilder(
+                    future: DBUtil.getImageFullPath(prompt.imageData!.imagePath),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (!snapshot.hasError) {
+                          return Image.file(File(snapshot.data!));
+                        } else {
+                          return Text("${ErrorMessage.someError}: ${snapshot.error}");
+                        }
+                      } else {
+                        return const Text(StateMessage.imageReading);
+                      }
+                    },
+                  ),
+                ],
+              )
+            ),
+            TextField(
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                alignLabelWithHint: true,
+                labelText: "prompt",
+              ),
+              maxLines: 2,
+              controller: promptTextController,
+              onChanged: (value) {
+                prompt.prompt = value;
+              },
+            ),
+          ]
+        )
+      )
     );
   }
 

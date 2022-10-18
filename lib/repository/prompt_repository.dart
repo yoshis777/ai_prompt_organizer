@@ -34,6 +34,14 @@ class PromptRepository {
     return _instance!;
   }
 
+  List<Prompt>? getAllPrompts() {
+    if (realm.isClosed) {
+      return null;
+    }
+
+    return realm.all<Prompt>().toList();
+  }
+
   void addPrompt(Prompt prompt) {
     if (realm.isClosed) {
       return;
