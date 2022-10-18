@@ -150,17 +150,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> saveImage(String imagePath) async {
-    await copyImageFile(imagePath);
+    String targetImgPath = await copyImageFile(imagePath);
 
     final prompt = Prompt(
       Uuid.v4(),
       "", "", "", "",
       DateTime.now(), DateTime.now()
     );
-    prompt.imageData = ImageData(Uuid.v4(), imagePath);
+    prompt.imageData = ImageData(Uuid.v4(), targetImgPath);
     final repository = await PromptRepository.getInstance();
     repository.addPrompt(prompt);
   }
+
   Future<String> copyImageFile(String imagePath) async {
     final originalFile = File(imagePath);
     final imgDir = await DBUtil.getImageFolder();
