@@ -81,12 +81,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(width: double.infinity),
             SizedBox(
-              width: 200,
+              width: 200, height:200,
               child: Stack(
                 alignment: Alignment.topLeft,
                 children: [
@@ -106,21 +105,29 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ],
               )
-            ),
-            TextField(
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                alignLabelWithHint: true,
-                labelText: "prompt",
               ),
-              maxLines: 2,
-              controller: promptTextController,
-              onChanged: (value) {
-                prompt.prompt = value;
-              },
-            ),
-          ]
-        )
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(width: double.infinity),
+                  TextField(
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      alignLabelWithHint: true,
+                      labelText: "prompt",
+                    ),
+                    maxLines: 2,
+                    controller: promptTextController,
+                    onChanged: (value) {
+                      prompt.prompt = value;
+                    },
+                  ),
+                ]
+              ),
+            )
+          ],
+        ),
       )
     );
   }
