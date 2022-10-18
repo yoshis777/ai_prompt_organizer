@@ -17,6 +17,7 @@ class Prompt extends _Prompt with RealmEntity, RealmObject {
     String uc,
     DateTime createdAt,
     DateTime updatedAt, {
+    ImageData? imageData,
     int sizeX = 512,
     int sizeY = 768,
     bool addQualityTags = true,
@@ -36,6 +37,7 @@ class Prompt extends _Prompt with RealmEntity, RealmObject {
       });
     }
     RealmObject.set(this, 'id', id);
+    RealmObject.set(this, 'imageData', imageData);
     RealmObject.set(this, 'prompt', prompt);
     RealmObject.set(this, 'diffusionType', diffusionType);
     RealmObject.set(this, 'sizeX', sizeX);
@@ -57,6 +59,13 @@ class Prompt extends _Prompt with RealmEntity, RealmObject {
   Uuid get id => RealmObject.get<Uuid>(this, 'id') as Uuid;
   @override
   set id(Uuid value) => RealmObject.set(this, 'id', value);
+
+  @override
+  ImageData? get imageData =>
+      RealmObject.get<ImageData>(this, 'imageData') as ImageData?;
+  @override
+  set imageData(covariant ImageData? value) =>
+      RealmObject.set(this, 'imageData', value);
 
   @override
   String get prompt => RealmObject.get<String>(this, 'prompt') as String;
@@ -144,6 +153,8 @@ class Prompt extends _Prompt with RealmEntity, RealmObject {
     RealmObject.registerFactory(Prompt._);
     return const SchemaObject(Prompt, 'Prompt', [
       SchemaProperty('id', RealmPropertyType.uuid, primaryKey: true),
+      SchemaProperty('imageData', RealmPropertyType.object,
+          optional: true, linkTarget: 'ImageData'),
       SchemaProperty('prompt', RealmPropertyType.string),
       SchemaProperty('diffusionType', RealmPropertyType.string),
       SchemaProperty('sizeX', RealmPropertyType.int),

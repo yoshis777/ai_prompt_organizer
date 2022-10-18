@@ -6,6 +6,7 @@ part 'prompt.g.dart'; // declare a part file.
 class _Prompt {
   @PrimaryKey()
   late Uuid id;
+  late _ImageData? imageData;
   late String prompt;
   late String diffusionType;
   int sizeX = 512;
