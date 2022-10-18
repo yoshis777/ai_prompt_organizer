@@ -23,8 +23,6 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Prompt> promptList = List.empty();
   final List<String> imagePathList = List.empty();
 
-  final promptTextController = TextEditingController();
-
   Future<bool> loadPromptFromDB() async {
     final repository = await PromptRepository.getInstance();
 
@@ -78,6 +76,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget buildPromptWidget(Prompt prompt) {
+    final promptTextController = TextEditingController();
+    promptTextController.text = prompt.prompt;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -120,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     maxLines: 2,
                     controller: promptTextController,
                     onChanged: (value) {
-                      prompt.prompt = value;
+                      // TODO: 定期的にDB反映
                     },
                   ),
                 ]
