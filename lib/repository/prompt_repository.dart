@@ -39,7 +39,7 @@ class PromptRepository {
       return null;
     }
 
-    return realm.all<Prompt>().toList();
+    return realm.query<Prompt>("TRUEPREDICATE SORT(createdAt DESC)").toList();
   }
 
   void addPrompt(Prompt prompt) {
@@ -51,6 +51,16 @@ class PromptRepository {
       realm.add(prompt, update: true);
       //for rebuilding prompt widgets
       streamController.sink.add(realm.all<Prompt>());
+    });
+  }
+
+  void update(void Function() callback) {
+    if (realm.isClosed) {
+      return;
+    }
+
+    realm.write(() {
+      callback();
     });
   }
 }

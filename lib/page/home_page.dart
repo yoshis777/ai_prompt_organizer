@@ -124,8 +124,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     maxLines: 2,
                     controller: promptTextController,
-                    onChanged: (value) {
-                      // TODO: 定期的にDB反映
+                    onChanged: (value) async {
+                      final repository = await PromptRepository.getInstance();
+                      repository.update(() => {
+                        prompt.prompt = value
+                      });
                     },
                   ),
                 ]
