@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ai_prompt_organizer/repository/prompt_repository.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 itemCount: promptList.length,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: const EdgeInsets.all(4),
+                    padding: const EdgeInsets.only(top: 4, left: 4, right: 4),
                     child: buildPromptWidget(promptList[index]),
                   );
                 }
@@ -82,8 +83,16 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget buildPromptWidget(Prompt prompt) {
     final promptTextController = TextEditingController();
     promptTextController.text = prompt.prompt;
+    final seedTextController = TextEditingController();
+    seedTextController.text = prompt.seed;
+    final stepsTextController = TextEditingController();
+    stepsTextController.text = prompt.steps.toString();
+    final scaleTextController = TextEditingController();
+    scaleTextController.text = prompt.scale.toString();
+
 
     return Card(
+      color: Colors.white70,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
@@ -116,21 +125,96 @@ class _MyHomePageState extends State<MyHomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(width: double.infinity),
-                  TextField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      alignLabelWithHint: true,
-                      labelText: "prompt",
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        alignLabelWithHint: true,
+                        labelText: "prompt",
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      maxLines: 2,
+                      controller: promptTextController,
+                      onChanged: (value) async {
+                        final repository = await PromptRepository.getInstance();
+                        repository.update(() => {
+                          prompt.prompt = value
+                        });
+                      },
                     ),
-                    maxLines: 2,
-                    controller: promptTextController,
-                    onChanged: (value) async {
-                      final repository = await PromptRepository.getInstance();
-                      repository.update(() => {
-                        prompt.prompt = value
-                      });
-                    },
                   ),
+                  Row(crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(width: 112,
+                        child: TextField(
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            alignLabelWithHint: true,
+                            labelText: "seed",
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          maxLines: 1,
+                          controller: seedTextController,
+                          onChanged: (value) async {
+                            final repository = await PromptRepository.getInstance();
+                            repository.update(() => {
+                              prompt.seed = value
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      SizedBox(width: 60,
+                        child: TextField(
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            alignLabelWithHint: true,
+                            labelText: "steps",
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          maxLines: 1,
+                          controller: stepsTextController,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+                          ],
+                          onChanged: (value) async {
+                            final repository = await PromptRepository.getInstance();
+                            repository.update(() => {
+                              prompt.steps = int.parse(value)
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      SizedBox(width: 60,
+                        child: TextField(
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            alignLabelWithHint: true,
+                            labelText: "scale",
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          maxLines: 1,
+                          controller: scaleTextController,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+                          ],
+                          onChanged: (value) async {
+                            final repository = await PromptRepository.getInstance();
+                            repository.update(() => {
+                              prompt.scale = int.parse(value)
+                            });
+                          },
+                        ),
+                      ),
+                    ]
+                  ),
+
                 ]
               ),
             )
@@ -169,7 +253,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final prompt = Prompt(
       Uuid.v4(),
-      "", "", "", "",
       DateTime.now(), DateTime.now()
     );
     prompt.imageData = ImageData(Uuid.v4(), targetImgPath);

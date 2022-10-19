@@ -11,28 +11,33 @@ class Prompt extends _Prompt with RealmEntity, RealmObject {
 
   Prompt(
     Uuid id,
-    String prompt,
-    String diffusionType,
-    String ucType,
-    String uc,
     DateTime createdAt,
     DateTime updatedAt, {
     ImageData? imageData,
+    String prompt = "",
+    String diffusionType = "",
     int sizeX = 512,
     int sizeY = 768,
+    String ucType = "",
+    String uc = "",
     bool addQualityTags = true,
     int steps = 28,
     int scale = 11,
-    String? seed,
+    String seed = "",
     String advancedSampling = "k_euler_ancestral",
   }) {
     if (!_defaultsSet) {
       _defaultsSet = RealmObject.setDefaults<Prompt>({
+        'prompt': "",
+        'diffusionType': "",
         'sizeX': 512,
         'sizeY': 768,
+        'ucType': "",
+        'uc': "",
         'addQualityTags': true,
         'steps': 28,
         'scale': 11,
+        'seed': "",
         'advancedSampling': "k_euler_ancestral",
       });
     }
@@ -117,9 +122,9 @@ class Prompt extends _Prompt with RealmEntity, RealmObject {
   set scale(int value) => RealmObject.set(this, 'scale', value);
 
   @override
-  String? get seed => RealmObject.get<String>(this, 'seed') as String?;
+  String get seed => RealmObject.get<String>(this, 'seed') as String;
   @override
-  set seed(String? value) => RealmObject.set(this, 'seed', value);
+  set seed(String value) => RealmObject.set(this, 'seed', value);
 
   @override
   String get advancedSampling =>
@@ -164,7 +169,7 @@ class Prompt extends _Prompt with RealmEntity, RealmObject {
       SchemaProperty('addQualityTags', RealmPropertyType.bool),
       SchemaProperty('steps', RealmPropertyType.int),
       SchemaProperty('scale', RealmPropertyType.int),
-      SchemaProperty('seed', RealmPropertyType.string, optional: true),
+      SchemaProperty('seed', RealmPropertyType.string),
       SchemaProperty('advancedSampling', RealmPropertyType.string),
       SchemaProperty('createdAt', RealmPropertyType.timestamp),
       SchemaProperty('updatedAt', RealmPropertyType.timestamp),

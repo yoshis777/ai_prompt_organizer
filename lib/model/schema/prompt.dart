@@ -6,17 +6,17 @@ part 'prompt.g.dart'; // declare a part file.
 class _Prompt {
   @PrimaryKey()
   late Uuid id;
-  late _ImageData? imageData;
-  late String prompt;
-  late String diffusionType;
+  _ImageData? imageData;
+  String prompt = "";
+  String diffusionType = "";
   int sizeX = 512;
   int sizeY = 768;
-  late String ucType;
-  late String uc;
+  String ucType = "";
+  String uc = "";
   bool addQualityTags = true;
   int steps = 28;
   int scale = 11;
-  late String? seed;
+  String seed = "";
   String advancedSampling = "k_euler_ancestral";
 
   late DateTime createdAt;
