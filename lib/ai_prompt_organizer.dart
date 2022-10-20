@@ -4,6 +4,13 @@ class AIPromptOrganizer {
   static const imageFolderName = "images";
 }
 
+enum PromptColumn {
+  prompt,
+  seed,
+  uc,
+  description
+}
+
 class ErrorMessage {
   static const someError = "エラーが発生しました。";
   static const fileExists = "既に同名のファイルが登録されています。";

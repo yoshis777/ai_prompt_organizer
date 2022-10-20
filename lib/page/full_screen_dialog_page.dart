@@ -35,7 +35,7 @@ class _FullScreenDialogPageState extends State<FullScreenDialogPage> {
                   return Text("${ErrorMessage.someError}: ${snapshot.error}");
                 }
               } else {
-                return const Text(StateMessage.imageReading);
+                return const Text(ErrorMessage.imageNotFound);
               }
             },
           ),

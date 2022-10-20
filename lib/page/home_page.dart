@@ -28,6 +28,17 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<String> imagePathList = List.empty();
   final promptSearchTextController = TextEditingController();
   bool isInit = true;
+  Map<PromptColumn, String> bufferedTexts = {
+    PromptColumn.prompt: "",
+    PromptColumn.seed: "",
+    PromptColumn.uc: "",
+    PromptColumn.description: "",
+  };
+  // Mapだとbool?になり末尾に!を付加しても等価式が働かないため個別で宣言
+  bool isPromptEditing = false;
+  bool isSeedEditing = false;
+  bool isUcEditing = false;
+  bool isDescriptionEditing = false;
 
   Future<bool> loadPromptFromDB() async {
     final repository = await PromptRepository.getInstance();
@@ -63,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   alignLabelWithHint: true,
-                  labelText: "search prompt or seed",
+                  labelText: "search",
                   filled: true,
                   fillColor: Colors.white,
                   isDense: true,
@@ -166,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               return Text("${ErrorMessage.someError}: ${snapshot.error}");
                             }
                           } else {
-                            return const Text(StateMessage.imageReading);
+                            return const Text(ErrorMessage.imageNotFound);
                           }
                         },
                       ),
@@ -174,6 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   )
               ),
             ),
+            const SizedBox(width: 8),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,10 +204,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       maxLines: 2,
                       controller: promptTextController,
                       onChanged: (value) async {
-                        final repository = await PromptRepository.getInstance();
-                        repository.update(() => {
-                          prompt.prompt = value
-                        });
+                        bufferedTexts[PromptColumn.prompt] = value;
+                        isPromptEditing = true;
+                        await Future.delayed(const Duration(seconds: 1));
+                        if(isPromptEditing) {
+                          isPromptEditing = false;
+                          final repository = await PromptRepository.getInstance();
+                          repository.update(() => {
+                            prompt.prompt = bufferedTexts[PromptColumn.prompt]!
+                          });
+                        }
                       },
                     ),
                   ),
@@ -218,10 +236,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                     maxLines: 1,
                                     controller: seedTextController,
                                     onChanged: (value) async {
-                                      final repository = await PromptRepository.getInstance();
-                                      repository.update(() => {
-                                        prompt.seed = value
-                                      });
+                                      bufferedTexts[PromptColumn.seed] = value;
+                                      isSeedEditing = true;
+                                      await Future.delayed(const Duration(seconds: 1));
+                                      if(isSeedEditing) {
+                                        isSeedEditing = false;
+                                        final repository = await PromptRepository.getInstance();
+                                        repository.update(() => {
+                                          prompt.seed = bufferedTexts[PromptColumn.seed]!
+                                        });
+                                      }
                                     },
                                   ),
                                 ),
@@ -359,10 +383,16 @@ class _MyHomePageState extends State<MyHomePage> {
                               maxLines: 2,
                               controller: ucTextController,
                               onChanged: (value) async {
-                                final repository = await PromptRepository.getInstance();
-                                repository.update(() => {
-                                  prompt.uc = value
-                                });
+                                bufferedTexts[PromptColumn.uc] = value;
+                                isUcEditing = true;
+                                await Future.delayed(const Duration(seconds: 1));
+                                if(isUcEditing) {
+                                  isUcEditing = false;
+                                  final repository = await PromptRepository.getInstance();
+                                  repository.update(() => {
+                                    prompt.uc = bufferedTexts[PromptColumn.uc]!
+                                  });
+                                }
                               },
                             ),
                           ),
@@ -396,10 +426,16 @@ class _MyHomePageState extends State<MyHomePage> {
                               maxLines: 2,
                               controller: descriptionTextController,
                               onChanged: (value) async {
-                                final repository = await PromptRepository.getInstance();
-                                repository.update(() => {
-                                  prompt.description = value
-                                });
+                                bufferedTexts[PromptColumn.description] = value;
+                                isDescriptionEditing = true;
+                                await Future.delayed(const Duration(seconds: 1));
+                                if(isDescriptionEditing) {
+                                  isDescriptionEditing = false;
+                                  final repository = await PromptRepository.getInstance();
+                                  repository.update(() => {
+                                    prompt.description = bufferedTexts[PromptColumn.description]!
+                                  });
+                                }
                               },
                             ),
                           ),
@@ -439,30 +475,35 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                         ],
-                      )
+                      ),
+                      const SizedBox(width: 4),
+                      Column(crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 120,
+                            alignment: Alignment.bottomCenter,
+                            child: IconButton(
+                              onPressed: () async {
+                                showDialog(
+                                    context: context,
+                                    builder: ((_) {
+                                      return const DeleteAlertDialog();
+                                    })).then((value) {
+                                  if (value == null) {
+                                    return;
+                                  }
+                                  deletePrompt(context, prompt);
+                                });
+                              },
+                              icon: const Icon(Icons.delete),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ]
               ),
-            ),
-            IconButton(
-              onPressed: () async {
-                showDialog(
-                    context: context,
-                    builder: ((_) {
-                      return const DeleteAlertDialog();
-                    })).then((value) {
-                  if (value == null) {
-                    return;
-                  }
-                  try {
-                    deletePrompt(context, prompt);
-                  } catch (e) {
-                    showErrorSnackBar(context, e);
-                  }
-                });
-              },
-              icon: const Icon(Icons.delete),
             ),
           ],
         ),
@@ -472,9 +513,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> deletePrompt(BuildContext context, Prompt prompt) async {
     final repository = await PromptRepository.getInstance();
-
-    await repository.deletePromptImageFile(prompt);
-    await repository.deletePrompt(prompt);
+    try {
+      await repository.deletePromptImageFile(prompt);
+    } catch (e) {
+      if (!mounted) return;
+      showErrorSnackBar(context, e);
+    } finally {
+      await repository.deletePrompt(prompt);
+    }
   }
 
   Future<void> pickImage(BuildContext context) async {

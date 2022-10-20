@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:ai_prompt_organizer/ai_prompt_organizer.dart';
+import 'package:path/path.dart';
 import 'package:realm/realm.dart';
 
 import '../model/schema/prompt.dart';
@@ -82,13 +83,13 @@ class PromptRepository {
 
   Future<void> deletePromptImageFile(Prompt prompt) async {
     if (prompt.imageData != null && prompt.imageData?.imagePath != null) {
+      final deleteFile = File(await DBUtil.getImageFullPath(prompt.imageData!.imagePath));
       try {
-        final deleteFile = File(await DBUtil.getImageFullPath(prompt.imageData!.imagePath));
         if (await deleteFile.exists()) {
           await deleteFile.delete();
         }
       } catch (e) {
-        return Future.error(ErrorMessage.fileDeleteError);
+        return Future.error(ErrorMessage.fileDeleteError + basename(deleteFile.path));
       }
     }
   }
