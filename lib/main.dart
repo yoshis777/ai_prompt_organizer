@@ -1,7 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:ai_prompt_organizer/page/home_page.dart';
+import 'package:window_size/window_size.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isWindows) {
+    setWindowTitle('AI Prompt Organizer');
+    setWindowMinSize(const Size(800, 600));
+  }
+
   runApp(const MyApp());
 }
 
