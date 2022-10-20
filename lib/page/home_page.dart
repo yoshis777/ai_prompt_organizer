@@ -71,8 +71,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 maxLines: 1,
                 controller: promptSearchTextController,
                 onSubmitted: (value) async {
+                  final searchWords = value.split(' ');
                   final repository = await PromptRepository.getInstance();
-                  repository.showSearchedPrompts("prompt", value);
+                  repository.showSearchedPrompts(searchWords);
                 },
               ),
             ),
@@ -127,6 +128,8 @@ class _MyHomePageState extends State<MyHomePage> {
     sizeXTextController.text = prompt.sizeX.toString();
     final sizeYTextController = TextEditingController();
     sizeYTextController.text = prompt.sizeY.toString();
+    final descriptionTextController = TextEditingController();
+    descriptionTextController.text = prompt.description;
 
 
     return Card(
@@ -382,6 +385,30 @@ class _MyHomePageState extends State<MyHomePage> {
                                   })
                           ),
                           SizedBox(width: 240,
+                            child: TextField(
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                alignLabelWithHint: true,
+                                labelText: "description or tags",
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                              maxLines: 2,
+                              controller: descriptionTextController,
+                              onChanged: (value) async {
+                                final repository = await PromptRepository.getInstance();
+                                repository.update(() => {
+                                  prompt.description = value
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 4),
+                      Column(crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(width: 180,
                               child: advancedSamplingDropDown(
                                   nowValue: prompt.advancedSampling,
                                   onChanged: (value) async {
@@ -394,8 +421,25 @@ class _MyHomePageState extends State<MyHomePage> {
                                     setState(() {});
                                   })
                           ),
+                          SizedBox(width: 180,
+                            child: CheckboxListTile(
+                              contentPadding: EdgeInsets.zero,
+                              title: const Text("Add Quality Tags"),
+                              controlAffinity: ListTileControlAffinity.leading,
+                              value: prompt.addQualityTags,
+                              onChanged: (value) async {
+                                if (value != null) {
+                                  final repository = await PromptRepository.getInstance();
+                                  repository.update(() {
+                                    prompt.addQualityTags = value;
+                                  });
+                                }
+                                setState(() {});
+                              },
+                            ),
+                          ),
                         ],
-                      ),
+                      )
                     ],
                   ),
                 ]
@@ -471,6 +515,7 @@ class _MyHomePageState extends State<MyHomePage> {
     target.uc = origin.uc;
     target.diffusionType = origin.diffusionType;
     target.advancedSampling = origin.advancedSampling;
+    target.addQualityTags = origin.addQualityTags;
     return target;
   }
 

@@ -18,6 +18,7 @@ class _Prompt {
   int scale = 11;
   String seed = "";
   String advancedSampling = "k_euler_ancestral";
+  String description = "";
 
   late DateTime createdAt;
   late DateTime updatedAt;

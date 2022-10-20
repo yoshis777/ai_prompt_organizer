@@ -8,7 +8,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows) {
     setWindowTitle('AI Prompt Organizer');
-    setWindowMinSize(const Size(1050, 600));
+    setWindowMinSize(const Size(1280, 600));
   }
 
   runApp(const MyApp());

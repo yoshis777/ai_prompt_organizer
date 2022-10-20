@@ -25,6 +25,7 @@ class Prompt extends _Prompt with RealmEntity, RealmObject {
     int scale = 11,
     String seed = "",
     String advancedSampling = "k_euler_ancestral",
+    String description = "",
   }) {
     if (!_defaultsSet) {
       _defaultsSet = RealmObject.setDefaults<Prompt>({
@@ -39,6 +40,7 @@ class Prompt extends _Prompt with RealmEntity, RealmObject {
         'scale': 11,
         'seed': "",
         'advancedSampling': "k_euler_ancestral",
+        'description': "",
       });
     }
     RealmObject.set(this, 'id', id);
@@ -54,6 +56,7 @@ class Prompt extends _Prompt with RealmEntity, RealmObject {
     RealmObject.set(this, 'scale', scale);
     RealmObject.set(this, 'seed', seed);
     RealmObject.set(this, 'advancedSampling', advancedSampling);
+    RealmObject.set(this, 'description', description);
     RealmObject.set(this, 'createdAt', createdAt);
     RealmObject.set(this, 'updatedAt', updatedAt);
   }
@@ -134,6 +137,12 @@ class Prompt extends _Prompt with RealmEntity, RealmObject {
       RealmObject.set(this, 'advancedSampling', value);
 
   @override
+  String get description =>
+      RealmObject.get<String>(this, 'description') as String;
+  @override
+  set description(String value) => RealmObject.set(this, 'description', value);
+
+  @override
   DateTime get createdAt =>
       RealmObject.get<DateTime>(this, 'createdAt') as DateTime;
   @override
@@ -171,6 +180,7 @@ class Prompt extends _Prompt with RealmEntity, RealmObject {
       SchemaProperty('scale', RealmPropertyType.int),
       SchemaProperty('seed', RealmPropertyType.string),
       SchemaProperty('advancedSampling', RealmPropertyType.string),
+      SchemaProperty('description', RealmPropertyType.string),
       SchemaProperty('createdAt', RealmPropertyType.timestamp),
       SchemaProperty('updatedAt', RealmPropertyType.timestamp),
     ]);
