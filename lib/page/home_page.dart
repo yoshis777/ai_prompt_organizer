@@ -402,6 +402,18 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Prompt takeOverSomeColumns(Prompt target, Prompt origin) {
+    target.steps = origin.steps;
+    target.scale = origin.scale;
+    target.sizeX = origin.sizeX;
+    target.sizeY = origin.sizeY;
+    target.ucType = origin.ucType;
+    target.uc = origin.uc;
+    target.diffusionType = origin.diffusionType;
+    target.advancedSampling = origin.advancedSampling;
+    return target;
+  }
+
   Future<void> saveImage(String imagePath) async {
     String targetImgPath = await copyImageFile(imagePath);
 
@@ -409,6 +421,10 @@ class _MyHomePageState extends State<MyHomePage> {
       Uuid.v4(),
       DateTime.now(), DateTime.now()
     );
+    if (promptList.isNotEmpty) {
+      Prompt latest = promptList[0];
+      takeOverSomeColumns(prompt, latest);
+    }
     prompt.imageData = ImageData(Uuid.v4(), targetImgPath);
     final repository = await PromptRepository.getInstance();
     repository.addPrompt(prompt);
