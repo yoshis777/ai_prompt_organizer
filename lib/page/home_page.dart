@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:realm/realm.dart';
 
 import '../ai_prompt_organizer.dart';
+import '../component/ai_option_dropdowns.dart';
 import '../model/schema/prompt.dart';
 import '../util/db_util.dart';
 import 'full_screen_dialog_page.dart';
@@ -167,28 +168,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   Row(crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(width: 200,
-                        child: TextField(
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            alignLabelWithHint: true,
-                            labelText: "Undesired Content",
-                            filled: true,
-                            fillColor: Colors.white,
-                          ),
-                          maxLines: 4,
-                          controller: ucTextController,
-                          onChanged: (value) async {
-                            final repository = await PromptRepository.getInstance();
-                            repository.update(() => {
-                              prompt.uc = value
-                            });
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 4),
                       Column(crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          const SizedBox(height: 12),
                           Row(crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(width: 112,
@@ -261,7 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           const SizedBox(height: 4),
                           Row(crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(width: 80,
+                              SizedBox(width: 110,
                                 child: TextField(
                                   decoration: const InputDecoration(
                                     border: OutlineInputBorder(),
@@ -285,11 +267,12 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                               const SizedBox(width: 4),
                               Container(alignment: Alignment.center,
+                                width: 12,
                                 height:50,
                                 child: const Text("x")
                               ),
                               const SizedBox(width: 4),
-                              SizedBox(width: 80,
+                              SizedBox(width: 110,
                                 child: TextField(
                                   decoration: const InputDecoration(
                                     border: OutlineInputBorder(),
@@ -314,7 +297,72 @@ class _MyHomePageState extends State<MyHomePage> {
                             ],
                           ),
                         ],
-                      )
+                      ),
+                      const SizedBox(width: 4),
+                      Column(crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(width: 240,
+                              child: ucTypeDropDown(
+                                  nowValue: prompt.ucType,
+                                  onChanged: (value) async {
+                                    final repository = await PromptRepository.getInstance();
+                                    repository.update(() => {
+                                      if (value != null) {
+                                        prompt.ucType = value
+                                      }
+                                    });
+                                  })
+                          ),
+                          SizedBox(width: 240,
+                            child: TextField(
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                alignLabelWithHint: true,
+                                labelText: "Undesired Content",
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                              maxLines: 2,
+                              controller: ucTextController,
+                              onChanged: (value) async {
+                                final repository = await PromptRepository.getInstance();
+                                repository.update(() => {
+                                  prompt.uc = value
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 4),
+                      Column(crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(width: 240,
+                              child: diffusionTypeDropDown(
+                                  nowValue: prompt.diffusionType,
+                                  onChanged: (value) async {
+                                    final repository = await PromptRepository.getInstance();
+                                    repository.update(() => {
+                                      if (value != null) {
+                                        prompt.diffusionType = value
+                                      }
+                                    });
+                                  })
+                          ),
+                          SizedBox(width: 240,
+                              child: advancedSamplingDropDown(
+                                  nowValue: prompt.advancedSampling,
+                                  onChanged: (value) async {
+                                    final repository = await PromptRepository.getInstance();
+                                    repository.update(() => {
+                                      if (value != null) {
+                                        prompt.advancedSampling = value
+                                      }
+                                    });
+                                  })
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ]
@@ -343,6 +391,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(e.toString()),
             duration: const Duration(seconds: 3),
+            backgroundColor: Colors.red,
           ));
         }
         setState(() {});
