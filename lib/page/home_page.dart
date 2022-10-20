@@ -311,6 +311,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         prompt.ucType = value
                                       }
                                     });
+                                    setState(() {});
                                   })
                           ),
                           SizedBox(width: 240,
@@ -347,6 +348,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         prompt.diffusionType = value
                                       }
                                     });
+                                    setState(() {});
                                   })
                           ),
                           SizedBox(width: 240,
@@ -359,6 +361,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         prompt.advancedSampling = value
                                       }
                                     });
+                                    setState(() {});
                                   })
                           ),
                         ],
