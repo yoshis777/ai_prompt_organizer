@@ -83,12 +83,18 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget buildPromptWidget(Prompt prompt) {
     final promptTextController = TextEditingController();
     promptTextController.text = prompt.prompt;
+    final ucTextController = TextEditingController();
+    ucTextController.text = prompt.uc;
     final seedTextController = TextEditingController();
     seedTextController.text = prompt.seed;
     final stepsTextController = TextEditingController();
     stepsTextController.text = prompt.steps.toString();
     final scaleTextController = TextEditingController();
     scaleTextController.text = prompt.scale.toString();
+    final sizeXTextController = TextEditingController();
+    sizeXTextController.text = prompt.sizeX.toString();
+    final sizeYTextController = TextEditingController();
+    sizeYTextController.text = prompt.sizeY.toString();
 
 
     return Card(
@@ -147,74 +153,156 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   Row(crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(width: 112,
+                      SizedBox(width: 200,
                         child: TextField(
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             alignLabelWithHint: true,
-                            labelText: "seed",
+                            labelText: "Undesired Content",
                             filled: true,
                             fillColor: Colors.white,
                           ),
-                          maxLines: 1,
-                          controller: seedTextController,
+                          maxLines: 4,
+                          controller: ucTextController,
                           onChanged: (value) async {
                             final repository = await PromptRepository.getInstance();
                             repository.update(() => {
-                              prompt.seed = value
+                              prompt.uc = value
                             });
                           },
                         ),
                       ),
                       const SizedBox(width: 4),
-                      SizedBox(width: 60,
-                        child: TextField(
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            alignLabelWithHint: true,
-                            labelText: "steps",
-                            filled: true,
-                            fillColor: Colors.white,
+                      Column(crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(width: 112,
+                                  child: TextField(
+                                    decoration: const InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      alignLabelWithHint: true,
+                                      labelText: "seed",
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                    ),
+                                    maxLines: 1,
+                                    controller: seedTextController,
+                                    onChanged: (value) async {
+                                      final repository = await PromptRepository.getInstance();
+                                      repository.update(() => {
+                                        prompt.seed = value
+                                      });
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                SizedBox(width: 60,
+                                  child: TextField(
+                                    decoration: const InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      alignLabelWithHint: true,
+                                      labelText: "steps",
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                    ),
+                                    maxLines: 1,
+                                    controller: stepsTextController,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+                                    ],
+                                    onChanged: (value) async {
+                                      final repository = await PromptRepository.getInstance();
+                                      repository.update(() => {
+                                        prompt.steps = int.parse(value)
+                                      });
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                SizedBox(width: 60,
+                                  child: TextField(
+                                    decoration: const InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      alignLabelWithHint: true,
+                                      labelText: "scale",
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                    ),
+                                    maxLines: 1,
+                                    controller: scaleTextController,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+                                    ],
+                                    onChanged: (value) async {
+                                      final repository = await PromptRepository.getInstance();
+                                      repository.update(() => {
+                                        prompt.scale = int.parse(value)
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ]
                           ),
-                          maxLines: 1,
-                          controller: stepsTextController,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
-                          ],
-                          onChanged: (value) async {
-                            final repository = await PromptRepository.getInstance();
-                            repository.update(() => {
-                              prompt.steps = int.parse(value)
-                            });
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      SizedBox(width: 60,
-                        child: TextField(
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            alignLabelWithHint: true,
-                            labelText: "scale",
-                            filled: true,
-                            fillColor: Colors.white,
+                          const SizedBox(height: 4),
+                          Row(crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(width: 80,
+                                child: TextField(
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    alignLabelWithHint: true,
+                                    labelText: "width",
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                  ),
+                                  maxLines: 1,
+                                  controller: sizeXTextController,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+                                  ],
+                                  onChanged: (value) async {
+                                    final repository = await PromptRepository.getInstance();
+                                    repository.update(() => {
+                                      prompt.sizeX = int.parse(value)
+                                    });
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Container(alignment: Alignment.center,
+                                height:50,
+                                child: const Text("x")
+                              ),
+                              const SizedBox(width: 4),
+                              SizedBox(width: 80,
+                                child: TextField(
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    alignLabelWithHint: true,
+                                    labelText: "height",
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                  ),
+                                  maxLines: 1,
+                                  controller: sizeYTextController,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+                                  ],
+                                  onChanged: (value) async {
+                                    final repository = await PromptRepository.getInstance();
+                                    repository.update(() => {
+                                      prompt.sizeY = int.parse(value)
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
-                          maxLines: 1,
-                          controller: scaleTextController,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
-                          ],
-                          onChanged: (value) async {
-                            final repository = await PromptRepository.getInstance();
-                            repository.update(() => {
-                              prompt.scale = int.parse(value)
-                            });
-                          },
-                        ),
-                      ),
-                    ]
+                        ],
+                      )
+                    ],
                   ),
-
                 ]
               ),
             )
