@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:ai_prompt_organizer/ai_prompt_organizer.dart';
 import 'package:realm/realm.dart';
@@ -61,6 +62,33 @@ class PromptRepository {
 
     realm.write(() {
       callback();
+    });
+  }
+
+  Future<void> deletePromptImageFile(Prompt prompt) async {
+    if (prompt.imageData != null && prompt.imageData?.imagePath != null) {
+      try {
+        final deleteFile = File(await DBUtil.getImageFullPath(prompt.imageData!.imagePath));
+        if (await deleteFile.exists()) {
+          await deleteFile.delete();
+        }
+      } catch (e) {
+        return Future.error(ErrorMessage.fileDeleteError);
+      }
+    }
+  }
+
+  Future<void> deletePrompt(Prompt prompt) async {
+    if (realm.isClosed) {
+      return;
+    }
+
+    realm.write(() {
+      if (prompt.imageData != null) {
+        realm.delete(prompt.imageData!);
+      }
+      realm.delete(prompt);
+      streamController.sink.add(realm.all<Prompt>());
     });
   }
 }

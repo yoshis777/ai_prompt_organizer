@@ -9,6 +9,7 @@ import 'package:realm/realm.dart';
 
 import '../ai_prompt_organizer.dart';
 import '../component/ai_option_dropdowns.dart';
+import '../component/delete_alert_dialog.dart';
 import '../model/schema/prompt.dart';
 import '../util/db_util.dart';
 import 'full_screen_dialog_page.dart';
@@ -370,11 +371,37 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ]
               ),
-            )
+            ),
+            IconButton(
+              onPressed: () async {
+                showDialog(
+                    context: context,
+                    builder: ((_) {
+                      return const DeleteAlertDialog();
+                    })).then((value) {
+                  if (value == null) {
+                    return;
+                  }
+                  try {
+                    deletePrompt(context, prompt);
+                  } catch (e) {
+                    showErrorSnackBar(context, e);
+                  }
+                });
+              },
+              icon: const Icon(Icons.delete),
+            ),
           ],
         ),
       )
     );
+  }
+
+  Future<void> deletePrompt(BuildContext context, Prompt prompt) async {
+    final repository = await PromptRepository.getInstance();
+
+    await repository.deletePromptImageFile(prompt);
+    await repository.deletePrompt(prompt);
   }
 
   Future<void> pickImage(BuildContext context) async {
@@ -391,15 +418,19 @@ class _MyHomePageState extends State<MyHomePage> {
           await saveImage(item);
         } catch(e) {
           if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(e.toString()),
-            duration: const Duration(seconds: 3),
-            backgroundColor: Colors.red,
-          ));
+          showErrorSnackBar(context, e);
         }
         setState(() {});
       }
     }
+  }
+
+  void showErrorSnackBar(BuildContext context, e) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(e.toString()),
+      duration: const Duration(seconds: 3),
+      backgroundColor: Colors.red,
+    ));
   }
 
   Prompt takeOverSomeColumns(Prompt target, Prompt origin) {
