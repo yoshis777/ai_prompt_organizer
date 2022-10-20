@@ -43,6 +43,18 @@ class PromptRepository {
     return realm.query<Prompt>("TRUEPREDICATE SORT(createdAt DESC)").toList();
   }
 
+  RealmResults<Prompt> getAllResults() {
+    return realm.query<Prompt>("TRUEPREDICATE SORT(createdAt DESC)");
+  }
+
+  void showSearchedPrompts(String targetColumn, String query) {
+    if (realm.isClosed) {
+      return;
+    }
+    final results = realm.query<Prompt>(r'prompt CONTAINS $0 OR seed == $0 SORT(createdAt DESC)', [query]);
+    streamController.sink.add(results);
+  }
+
   void addPrompt(Prompt prompt) {
     if (realm.isClosed) {
       return;
@@ -51,7 +63,7 @@ class PromptRepository {
     realm.write(() {
       realm.add(prompt, update: true);
       //for rebuilding prompt widgets
-      streamController.sink.add(realm.all<Prompt>());
+      streamController.sink.add(getAllResults());
     });
   }
 
@@ -88,7 +100,7 @@ class PromptRepository {
         realm.delete(prompt.imageData!);
       }
       realm.delete(prompt);
-      streamController.sink.add(realm.all<Prompt>());
+      streamController.sink.add(getAllResults());
     });
   }
 }

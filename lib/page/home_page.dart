@@ -26,6 +26,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<Prompt> promptList = List.empty();
   final List<String> imagePathList = List.empty();
+  final promptSearchTextController = TextEditingController();
+  bool isInit = true;
 
   Future<bool> loadPromptFromDB() async {
     final repository = await PromptRepository.getInstance();
@@ -33,15 +35,19 @@ class _MyHomePageState extends State<MyHomePage> {
     repository.streamController.stream.listen((event) {
       setState(() {
         promptList = event.toList();
+        isInit = false;
       });
     });
 
-    final list = repository.getAllPrompts();
-    if (list != null) {
-      promptList = list;
-      return true;
+    if (isInit) {
+      final list = repository.getAllPrompts();
+      if (list != null) {
+        promptList = list;
+        return true;
+      }
+      return false;
     }
-    return false;
+    return true;
   }
 
   @override
@@ -49,6 +55,29 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(top: 6, left: 4, right: 4),
+            child: SizedBox(width: 200,
+              child: TextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  alignLabelWithHint: true,
+                  labelText: "search prompt or seed",
+                  filled: true,
+                  fillColor: Colors.white,
+                  isDense: true,
+                ),
+                maxLines: 1,
+                controller: promptSearchTextController,
+                onSubmitted: (value) async {
+                  final repository = await PromptRepository.getInstance();
+                  repository.showSearchedPrompts("prompt", value);
+                },
+              ),
+            ),
+          ),
+        ],
       ),
       body: FutureBuilder(
         future: loadPromptFromDB(),
