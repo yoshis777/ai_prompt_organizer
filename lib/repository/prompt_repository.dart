@@ -51,12 +51,10 @@ class PromptRepository {
     if (realm.isClosed) {
       return;
     }
-    String query = "";
+    RealmResults<Prompt> results = realm.query("TRUEPREDICATE SORT(createdAt DESC)");
     for (String keyword in keywords) {
-      query += "prompt CONTAINS '$keyword' OR seed == '$keyword' OR ";
+      results = results.query(r'prompt CONTAINS $0 OR seed == $0 OR description CONTAINS $0', [keyword]);
     }
-    query = query.substring(0, query.length - 4);
-    final results = realm.query<Prompt>('$query SORT(createdAt DESC)');
     streamController.sink.add(results);
   }
 

@@ -70,8 +70,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 maxLines: 1,
                 controller: promptSearchTextController,
-                onSubmitted: (value) async {
-                  final searchWords = value.split(' ');
+                onChanged: (value) async {
+                  final searchWords = value.split(',');
                   final repository = await PromptRepository.getInstance();
                   repository.showSearchedPrompts(searchWords);
                 },
