@@ -10,6 +10,7 @@ import 'package:realm/realm.dart';
 import '../ai_prompt_organizer.dart';
 import '../model/schema/prompt.dart';
 import '../util/db_util.dart';
+import 'full_screen_dialog_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -58,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 4, left: 4, right: 4),
-                    child: buildPromptWidget(promptList[index]),
+                    child: buildPromptWidget(context, promptList[index]),
                   );
                 }
               );
@@ -80,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget buildPromptWidget(Prompt prompt) {
+  Widget buildPromptWidget(BuildContext context, Prompt prompt) {
     final promptTextController = TextEditingController();
     promptTextController.text = prompt.prompt;
     final ucTextController = TextEditingController();
@@ -104,28 +105,41 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              width: 200, height:200,
-              child: Stack(
-                alignment: Alignment.topLeft,
-                children: [
-                  FutureBuilder(
-                    future: DBUtil.getImageFullPath(prompt.imageData!.imagePath),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        if (!snapshot.hasError) {
-                          return Image.file(File(snapshot.data!));
-                        } else {
-                          return Text("${ErrorMessage.someError}: ${snapshot.error}");
-                        }
-                      } else {
-                        return const Text(StateMessage.imageReading);
-                      }
-                    },
-                  ),
-                ],
-              )
+            GestureDetector(
+              onTap: () {
+                if (prompt.imageData != null && prompt.imageData?.imagePath != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => FullScreenDialogPage(imagePath: prompt.imageData!.imagePath),
+                      fullscreenDialog: true,
+                    ),
+                  );
+                }
+              },
+              child: SizedBox(
+                  width: 200, height:200,
+                  child: Stack(
+                    alignment: Alignment.topLeft,
+                    children: [
+                      FutureBuilder(
+                        future: DBUtil.getImageFullPath(prompt.imageData!.imagePath),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            if (!snapshot.hasError) {
+                              return Image.file(File(snapshot.data!));
+                            } else {
+                              return Text("${ErrorMessage.someError}: ${snapshot.error}");
+                            }
+                          } else {
+                            return const Text(StateMessage.imageReading);
+                          }
+                        },
+                      ),
+                    ],
+                  )
               ),
+            ),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
