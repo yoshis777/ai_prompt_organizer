@@ -24,6 +24,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  ScrollController scController = ScrollController();
   List<Prompt> promptList = List.empty();
   final List<String> imagePathList = List.empty();
   final promptSearchTextController = TextEditingController();
@@ -97,6 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
           if (snapshot.hasData) {
             if (snapshot.data!) {
               return ListView.builder(
+                controller: scController,
                 scrollDirection: Axis.vertical,
                 itemCount: promptList.length,
                 itemBuilder: (context, index) {
@@ -542,6 +544,11 @@ class _MyHomePageState extends State<MyHomePage> {
         setState(() {});
       }
     }
+    scController.animateTo(
+        0,
+        duration: const Duration(seconds: 1), //移動するのに要する時間を設定
+        curve: Curves.easeOutQuint //アニメーションの種類を設定
+    );
   }
 
   void showErrorSnackBar(BuildContext context, e) {

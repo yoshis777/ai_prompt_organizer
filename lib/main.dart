@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:ai_prompt_organizer/page/home_page.dart';
@@ -25,7 +26,16 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorSchemeSeed: const Color(0xFF0000cd),
       ),
+      scrollBehavior: MyCustomScrollBehavior(),
       home: const MyHomePage(title: 'AI Prompt Organizer'),
     );
   }
+}
+
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch, // 通常のタッチ入力デバイス
+    PointerDeviceKind.mouse, // これを追加！
+  };
 }
