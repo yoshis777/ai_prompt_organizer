@@ -7,6 +7,7 @@ import 'package:path/path.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:realm/realm.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../ai_prompt_organizer.dart';
 import '../component/ai_option_dropdowns.dart';
@@ -26,7 +27,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  ScrollController scController = ScrollController();
+  final ItemScrollController isController = ItemScrollController();
   List<Prompt> promptList = List.empty();
   final List<String> imagePathList = List.empty();
   final promptSearchTextController = TextEditingController();
@@ -78,21 +79,27 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           IconButton(
             onPressed: () async {
-              Navigator.push(
+              final scrollIndex = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => GalleryPage(title: widget.title),
                   fullscreenDialog: true,
                 ),
               );
+              if (scrollIndex != null) {
+                isController.scrollTo(
+                    index: scrollIndex,
+                    duration: const Duration(seconds: 1),
+                    curve: Curves.easeOutQuint);
+              }
             },
             icon: const Icon(Icons.image),
           ),
           IconButton(
             onPressed: () async {
               if (promptList.isNotEmpty) {
-                scController.animateTo(
-                    0,
+                isController.scrollTo(
+                    index: 0,
                     duration: const Duration(seconds: 1), //移動するのに要する時間を設定
                     curve: Curves.easeOutQuint //アニメーションの種類を設定
                 );
@@ -103,8 +110,8 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             onPressed: () async {
               if (promptList.isNotEmpty) {
-                scController.animateTo(
-                    scController.position.maxScrollExtent,
+                isController.scrollTo(
+                    index: promptList.length - 1,
                     duration: const Duration(seconds: 1), //移動するのに要する時間を設定
                     curve: Curves.easeOutQuint //アニメーションの種類を設定
                 );
@@ -151,8 +158,8 @@ class _MyHomePageState extends State<MyHomePage> {
               }
             }
             setState(() {});
-            scController.animateTo(
-                0,
+            isController.scrollTo(
+                index: 0,
                 duration: const Duration(seconds: 1), //移動するのに要する時間を設定
                 curve: Curves.easeOutQuint //アニメーションの種類を設定
             );
@@ -164,8 +171,8 @@ class _MyHomePageState extends State<MyHomePage> {
             if (snapshot.hasData) {
               if (snapshot.data!) {
                 if (promptList.isNotEmpty) {
-                  return ListView.builder(
-                      controller: scController,
+                  return ScrollablePositionedList.builder(
+                      itemScrollController: isController,
                       scrollDirection: Axis.vertical,
                       itemCount: promptList.length,
                       itemBuilder: (context, index) {
@@ -624,8 +631,8 @@ class _MyHomePageState extends State<MyHomePage> {
         setState(() {});
       }
     }
-    scController.animateTo(
-        0,
+    isController.scrollTo(
+        index: 0,
         duration: const Duration(seconds: 1), //移動するのに要する時間を設定
         curve: Curves.easeOutQuint //アニメーションの種類を設定
     );

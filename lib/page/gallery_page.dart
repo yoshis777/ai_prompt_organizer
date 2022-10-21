@@ -117,18 +117,23 @@ class _GalleryPageState extends State<GalleryPage> {
                     if (snapshot.data!) {
                       if (promptList.isNotEmpty) {
                         return Wrap(
-                          children: promptList.map<Widget>((prompt) {
+                          children: promptList.asMap().entries.map<Widget>((prompt) {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 6, left: 4, right: 4),
                               child: Container(
                                   width: 280, height:280,
                                   alignment: Alignment.center,
                                   child: FutureBuilder(
-                                    future: DBUtil.getImageFullPath(prompt.imageData!.imagePath),
+                                    future: DBUtil.getImageFullPath(prompt.value.imageData!.imagePath),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
                                         if (!snapshot.hasError) {
-                                          return Image.file(File(snapshot.data!));
+                                          return GestureDetector(
+                                            onTap: () {
+                                              Navigator.pop(context, prompt.key);
+                                            },
+                                            child: Image.file(File(snapshot.data!)),
+                                          );
                                         } else {
                                           return Text("${ErrorMessage.someError}: ${snapshot.error}");
                                         }
