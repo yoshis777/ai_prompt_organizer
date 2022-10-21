@@ -11,6 +11,12 @@ enum PromptColumn {
   description
 }
 
+class GuidanceMessage {
+  static const promptListIsEmpty = "以下のいずれかの方法でリストを追加することができます。\n"
+      "・右下のボタンから画像ファイルを選択\n"
+      "・この画面へ画像ファイルをドラッグ&ドロップ";
+}
+
 class ErrorMessage {
   static const someError = "エラーが発生しました。";
   static const fileExists = "既に同名のファイルが登録されています。";

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ai_prompt_organizer/repository/prompt_repository.dart';
+import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:file_picker/file_picker.dart';
@@ -70,21 +71,25 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           IconButton(
             onPressed: () async {
-              scController.animateTo(
-                  0,
-                  duration: const Duration(seconds: 1), //移動するのに要する時間を設定
-                  curve: Curves.easeOutQuint //アニメーションの種類を設定
-              );
+              if (promptList.isNotEmpty) {
+                scController.animateTo(
+                    0,
+                    duration: const Duration(seconds: 1), //移動するのに要する時間を設定
+                    curve: Curves.easeOutQuint //アニメーションの種類を設定
+                );
+              }
             },
             icon: const Icon(Icons.arrow_upward),
           ),
           IconButton(
             onPressed: () async {
-              scController.animateTo(
-                  scController.position.maxScrollExtent,
-                  duration: const Duration(seconds: 1), //移動するのに要する時間を設定
-                  curve: Curves.easeOutQuint //アニメーションの種類を設定
-              );
+              if (promptList.isNotEmpty) {
+                scController.animateTo(
+                    scController.position.maxScrollExtent,
+                    duration: const Duration(seconds: 1), //移動するのに要する時間を設定
+                    curve: Curves.easeOutQuint //アニメーションの種類を設定
+                );
+              }
             },
             icon: const Icon(Icons.arrow_downward),
           ),
@@ -113,29 +118,64 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: FutureBuilder(
-        future: loadPromptFromDB(),
-        builder: ((context, snapshot) {
-          if (snapshot.hasData) {
-            if (snapshot.data!) {
-              return ListView.builder(
-                controller: scController,
-                scrollDirection: Axis.vertical,
-                itemCount: promptList.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 4, left: 4, right: 4),
-                    child: buildPromptWidget(context, promptList[index]),
+      body: DropTarget(
+        onDragDone: (details) async {
+          for (var item in details.files) {
+            if (extension(item.path) == ".png" ||
+                extension(item.path) == ".jpeg" ||
+                extension(item.path) == ".jpg") {
+              try {
+                await saveImage(item.path);
+              } catch(e) {
+                if (!mounted) return;
+                showErrorSnackBar(context, e);
+              }
+            }
+            setState(() {});
+            scController.animateTo(
+                0,
+                duration: const Duration(seconds: 1), //移動するのに要する時間を設定
+                curve: Curves.easeOutQuint //アニメーションの種類を設定
+            );
+          }
+        },
+        child: FutureBuilder(
+          future: loadPromptFromDB(),
+          builder: ((context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data!) {
+                if (promptList.isNotEmpty) {
+                  return ListView.builder(
+                      controller: scController,
+                      scrollDirection: Axis.vertical,
+                      itemCount: promptList.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 4, left: 4, right: 4),
+                          child: buildPromptWidget(context, promptList[index]),
+                        );
+                      }
+                  );
+                } else {
+                  return const SizedBox(
+                      width: double.infinity,
+                    height: double.infinity,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(GuidanceMessage.promptListIsEmpty,
+                        style: TextStyle(color: Colors.grey, letterSpacing: 2),
+                      ),
+                    )
                   );
                 }
-              );
+              } else {
+                return const Text(ErrorMessage.dbReadingError);
+              }
             } else {
-              return const Text(ErrorMessage.dbReadingError);
+              return const Text(StateMessage.dbReading);
             }
-          } else {
-            return const Text(StateMessage.dbReading);
-          }
-        })
+          }),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
