@@ -6,6 +6,7 @@ import '../ai_prompt_organizer.dart';
 import '../model/schema/prompt.dart';
 import '../repository/prompt_repository.dart';
 import '../util/db_util.dart';
+import 'full_screen_dialog_page.dart';
 
 class GalleryPage extends StatefulWidget {
   const GalleryPage({super.key, required this.title, this.searchWord});
@@ -139,11 +140,30 @@ class _GalleryPageState extends State<GalleryPage> {
                                         builder: (context, snapshot) {
                                           if (snapshot.hasData) {
                                             if (!snapshot.hasError) {
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  Navigator.pop(context, [prompt.key, promptSearchTextController.text]);
-                                                },
-                                                child: Image.file(File(snapshot.data!)),
+                                              return Stack(
+                                                alignment: Alignment.bottomRight,
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      if (prompt.value.imageData?.imagePath != null) {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (_) => FullScreenDialogPage(imagePath: prompt.value.imageData!.imagePath),
+                                                            fullscreenDialog: true,
+                                                          ),
+                                                        );
+                                                      }
+                                                    },
+                                                    child: Image.file(File(snapshot.data!)),
+                                                  ),
+                                                  IconButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context, [prompt.key, promptSearchTextController.text]);
+                                                    },
+                                                    icon: const Icon(Icons.arrow_right, color: Colors.grey)
+                                                  )
+                                                ],
                                               );
                                             } else {
                                               return Text("${ErrorMessage.someError}: ${snapshot.error}");

@@ -15,7 +15,7 @@ class GuidanceMessage {
   static const promptListIsEmpty = "以下のいずれかの方法でリストを追加することができます。\n"
       "・右下のボタンから画像ファイルを選択\n"
       "・この画面へ画像ファイルをドラッグ&ドロップ";
-  static const galleryIsEmpty = "ギャラリーページでは、画像を押下することで\n"
+  static const galleryIsEmpty = "ギャラリーページでは、画像左下のボタンを押下することで\n"
       "指定した画像のプロンプト情報欄にスクロールすることができます。";
 }
 
