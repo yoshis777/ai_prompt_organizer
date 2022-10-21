@@ -68,6 +68,27 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
+          IconButton(
+            onPressed: () async {
+              scController.animateTo(
+                  0,
+                  duration: const Duration(seconds: 1), //移動するのに要する時間を設定
+                  curve: Curves.easeOutQuint //アニメーションの種類を設定
+              );
+            },
+            icon: const Icon(Icons.arrow_upward),
+          ),
+          IconButton(
+            onPressed: () async {
+              scController.animateTo(
+                  scController.position.maxScrollExtent,
+                  duration: const Duration(seconds: 1), //移動するのに要する時間を設定
+                  curve: Curves.easeOutQuint //アニメーションの種類を設定
+              );
+            },
+            icon: const Icon(Icons.arrow_downward),
+          ),
+          const SizedBox(width: 12),
           Padding(
             padding: const EdgeInsets.only(top: 6, left: 4, right: 4),
             child: SizedBox(width: 200,
