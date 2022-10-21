@@ -14,6 +14,7 @@ import '../component/delete_alert_dialog.dart';
 import '../model/schema/prompt.dart';
 import '../util/db_util.dart';
 import 'full_screen_dialog_page.dart';
+import 'gallery_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -46,10 +47,16 @@ class _MyHomePageState extends State<MyHomePage> {
     final repository = await PromptRepository.getInstance();
 
     repository.streamController.stream.listen((event) {
-      setState(() {
-        promptList = event.toList();
-        isInit = false;
-      });
+      if (!mounted) {
+        return;
+      }
+
+      if (mounted) {
+        setState(() {
+          promptList = event.toList();
+          isInit = false;
+        });
+      }
     });
 
     if (isInit) {
@@ -69,6 +76,18 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
+          IconButton(
+            onPressed: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => GalleryPage(title: widget.title),
+                  fullscreenDialog: true,
+                ),
+              );
+            },
+            icon: const Icon(Icons.image),
+          ),
           IconButton(
             onPressed: () async {
               if (promptList.isNotEmpty) {
