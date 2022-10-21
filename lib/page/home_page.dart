@@ -641,9 +641,9 @@ class _MyHomePageState extends State<MyHomePage> {
           if (!mounted) return;
           showErrorSnackBar(context, e);
         }
-        setState(() {});
       }
     }
+    setState(() {});
     isController.scrollTo(
         index: 0,
         duration: const Duration(seconds: 1), //移動するのに要する時間を設定
