@@ -19,6 +19,9 @@ class _Prompt {
   String seed = "";
   String advancedSampling = "k_euler_ancestral";
   String description = "";
+  _ImageData? sourceImageData;
+  double? strength;
+  double? noise;
 
   late DateTime createdAt;
   late DateTime updatedAt;
@@ -30,4 +33,5 @@ class _ImageData {
   @PrimaryKey()
   late Uuid id;
   late String imagePath;
+  String type = "output";
 }

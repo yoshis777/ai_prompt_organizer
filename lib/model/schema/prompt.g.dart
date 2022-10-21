@@ -26,6 +26,9 @@ class Prompt extends _Prompt with RealmEntity, RealmObject {
     String seed = "",
     String advancedSampling = "k_euler_ancestral",
     String description = "",
+    ImageData? sourceImageData,
+    double? strength,
+    double? noise,
   }) {
     if (!_defaultsSet) {
       _defaultsSet = RealmObject.setDefaults<Prompt>({
@@ -57,6 +60,9 @@ class Prompt extends _Prompt with RealmEntity, RealmObject {
     RealmObject.set(this, 'seed', seed);
     RealmObject.set(this, 'advancedSampling', advancedSampling);
     RealmObject.set(this, 'description', description);
+    RealmObject.set(this, 'sourceImageData', sourceImageData);
+    RealmObject.set(this, 'strength', strength);
+    RealmObject.set(this, 'noise', noise);
     RealmObject.set(this, 'createdAt', createdAt);
     RealmObject.set(this, 'updatedAt', updatedAt);
   }
@@ -143,6 +149,23 @@ class Prompt extends _Prompt with RealmEntity, RealmObject {
   set description(String value) => RealmObject.set(this, 'description', value);
 
   @override
+  ImageData? get sourceImageData =>
+      RealmObject.get<ImageData>(this, 'sourceImageData') as ImageData?;
+  @override
+  set sourceImageData(covariant ImageData? value) =>
+      RealmObject.set(this, 'sourceImageData', value);
+
+  @override
+  double? get strength => RealmObject.get<double>(this, 'strength') as double?;
+  @override
+  set strength(double? value) => RealmObject.set(this, 'strength', value);
+
+  @override
+  double? get noise => RealmObject.get<double>(this, 'noise') as double?;
+  @override
+  set noise(double? value) => RealmObject.set(this, 'noise', value);
+
+  @override
   DateTime get createdAt =>
       RealmObject.get<DateTime>(this, 'createdAt') as DateTime;
   @override
@@ -181,6 +204,10 @@ class Prompt extends _Prompt with RealmEntity, RealmObject {
       SchemaProperty('seed', RealmPropertyType.string),
       SchemaProperty('advancedSampling', RealmPropertyType.string),
       SchemaProperty('description', RealmPropertyType.string),
+      SchemaProperty('sourceImageData', RealmPropertyType.object,
+          optional: true, linkTarget: 'ImageData'),
+      SchemaProperty('strength', RealmPropertyType.double, optional: true),
+      SchemaProperty('noise', RealmPropertyType.double, optional: true),
       SchemaProperty('createdAt', RealmPropertyType.timestamp),
       SchemaProperty('updatedAt', RealmPropertyType.timestamp),
     ]);
@@ -188,12 +215,21 @@ class Prompt extends _Prompt with RealmEntity, RealmObject {
 }
 
 class ImageData extends _ImageData with RealmEntity, RealmObject {
+  static var _defaultsSet = false;
+
   ImageData(
     Uuid id,
-    String imagePath,
-  ) {
+    String imagePath, {
+    String type = "output",
+  }) {
+    if (!_defaultsSet) {
+      _defaultsSet = RealmObject.setDefaults<ImageData>({
+        'type': "output",
+      });
+    }
     RealmObject.set(this, 'id', id);
     RealmObject.set(this, 'imagePath', imagePath);
+    RealmObject.set(this, 'type', type);
   }
 
   ImageData._();
@@ -209,6 +245,11 @@ class ImageData extends _ImageData with RealmEntity, RealmObject {
   set imagePath(String value) => RealmObject.set(this, 'imagePath', value);
 
   @override
+  String get type => RealmObject.get<String>(this, 'type') as String;
+  @override
+  set type(String value) => RealmObject.set(this, 'type', value);
+
+  @override
   Stream<RealmObjectChanges<ImageData>> get changes =>
       RealmObject.getChanges<ImageData>(this);
 
@@ -222,6 +263,7 @@ class ImageData extends _ImageData with RealmEntity, RealmObject {
     return const SchemaObject(ImageData, 'ImageData', [
       SchemaProperty('id', RealmPropertyType.uuid, primaryKey: true),
       SchemaProperty('imagePath', RealmPropertyType.string),
+      SchemaProperty('type', RealmPropertyType.string),
     ]);
   }
 }
