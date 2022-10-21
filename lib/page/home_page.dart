@@ -82,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
               final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => GalleryPage(title: widget.title, searchWord: promptSearchTextController.text),
+                  builder: (_) => GalleryPage(searchWord: promptSearchTextController.text),
                   fullscreenDialog: true,
                 ),
               );

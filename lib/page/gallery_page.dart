@@ -9,9 +9,8 @@ import '../util/db_util.dart';
 import 'full_screen_dialog_page.dart';
 
 class GalleryPage extends StatefulWidget {
-  const GalleryPage({super.key, required this.title, this.searchWord});
+  const GalleryPage({super.key, this.searchWord});
 
-  final String title;
   final String? searchWord;
 
   @override
@@ -63,7 +62,7 @@ class _GalleryPageState extends State<GalleryPage> {
       },
       child: Scaffold(
           appBar: AppBar(
-            title: Text(widget.title),
+            title: const Text("Gallery Page"),
             actions: [
               IconButton(
                 onPressed: () async {
