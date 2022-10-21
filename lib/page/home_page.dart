@@ -247,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: SizedBox(
                   width: 200, height:200,
                   child: Stack(
-                    alignment: Alignment.topLeft,
+                    alignment: Alignment.topCenter,
                     children: [
                       FutureBuilder(
                         future: DBUtil.getImageFullPath(prompt.imageData!.imagePath),
