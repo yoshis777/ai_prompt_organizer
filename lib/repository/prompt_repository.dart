@@ -54,7 +54,7 @@ class PromptRepository {
     }
     RealmResults<Prompt> results = realm.query("TRUEPREDICATE SORT(createdAt DESC)");
     for (String keyword in keywords) {
-      results = results.query(r'prompt CONTAINS $0 OR seed == $0 OR description CONTAINS $0', [keyword]);
+      results = results.query(r'prompt CONTAINS $0 OR seed == $0 OR description CONTAINS $0 SORT(createdAt DESC)', [keyword]);
     }
     streamController.sink.add(results);
   }
