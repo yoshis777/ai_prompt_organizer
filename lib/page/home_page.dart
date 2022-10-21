@@ -308,7 +308,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       onChanged: (value) async {
                         bufferedTexts[PromptColumn.prompt] = value;
                         isPromptEditing = true;
-                        //await Future.delayed(const Duration(seconds: 1));
+                        await Future.delayed(const Duration(milliseconds: 100));
                         if(isPromptEditing) {
                           isPromptEditing = false;
                           final repository = await PromptRepository.getInstance();
@@ -340,7 +340,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     onChanged: (value) async {
                                       bufferedTexts[PromptColumn.seed] = value;
                                       isSeedEditing = true;
-                                      //await Future.delayed(const Duration(seconds: 1));
+                                      await Future.delayed(const Duration(milliseconds: 100));
                                       if(isSeedEditing) {
                                         isSeedEditing = false;
                                         final repository = await PromptRepository.getInstance();
@@ -487,7 +487,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               onChanged: (value) async {
                                 bufferedTexts[PromptColumn.uc] = value;
                                 isUcEditing = true;
-                                //await Future.delayed(const Duration(seconds: 1));
+                                await Future.delayed(const Duration(milliseconds: 100));
                                 if(isUcEditing) {
                                   isUcEditing = false;
                                   final repository = await PromptRepository.getInstance();
@@ -530,7 +530,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               onChanged: (value) async {
                                 bufferedTexts[PromptColumn.description] = value;
                                 isDescriptionEditing = true;
-                                //await Future.delayed(const Duration(seconds: 1));
+                                await Future.delayed(const Duration(milliseconds: 100));
                                 if(isDescriptionEditing) {
                                   isDescriptionEditing = false;
                                   final repository = await PromptRepository.getInstance();
