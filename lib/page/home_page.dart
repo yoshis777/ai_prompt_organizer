@@ -170,13 +170,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 showErrorSnackBar(context, e);
               }
             }
-            setState(() {});
-            isController.scrollTo(
-                index: 0,
-                duration: const Duration(seconds: 1), //移動するのに要する時間を設定
-                curve: Curves.easeOutQuint //アニメーションの種類を設定
-            );
           }
+          setState(() {});
+          isController.scrollTo(
+              index: 0,
+              duration: const Duration(seconds: 1), //移動するのに要する時間を設定
+              curve: Curves.easeOutQuint //アニメーションの種類を設定
+          );
         },
         child: FutureBuilder(
           future: loadPromptFromDB(),
