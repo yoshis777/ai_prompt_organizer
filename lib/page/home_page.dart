@@ -628,7 +628,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> pickImage(BuildContext context) async {
     final filePaths = await FilePicker.platform.pickFiles(
       type: FileType.image,
-      allowMultiple: false,
+      allowMultiple: true,
     );
     if (filePaths == null) {
       return;
