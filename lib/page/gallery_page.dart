@@ -8,9 +8,10 @@ import '../repository/prompt_repository.dart';
 import '../util/db_util.dart';
 
 class GalleryPage extends StatefulWidget {
-  const GalleryPage({super.key, required this.title});
+  const GalleryPage({super.key, required this.title, this.searchWord});
 
   final String title;
+  final String? searchWord;
 
   @override
   State<GalleryPage> createState() => _GalleryPageState();
@@ -35,7 +36,12 @@ class _GalleryPageState extends State<GalleryPage> {
     });
 
     if (isInit) {
-      final list = repository.getAllPrompts();
+      List<Prompt>? list = repository.getAllPrompts();
+      if (widget.searchWord != null) {
+        promptSearchTextController.text = widget.searchWord!;
+        repository.showSearchedPrompts(widget.searchWord!.split(','));
+      }
+
       if (list != null) {
         promptList = list;
         return true;
@@ -130,7 +136,7 @@ class _GalleryPageState extends State<GalleryPage> {
                                         if (!snapshot.hasError) {
                                           return GestureDetector(
                                             onTap: () {
-                                              Navigator.pop(context, prompt.key);
+                                              Navigator.pop(context, [prompt.key, promptSearchTextController.text]);
                                             },
                                             child: Image.file(File(snapshot.data!)),
                                           );
@@ -148,11 +154,11 @@ class _GalleryPageState extends State<GalleryPage> {
                         );
                       } else {
                         return const SizedBox(
-                            width: double.infinity,
-                            height: double.infinity,
+                            width: 600,
+                            height: 600,
                             child: Align(
                               alignment: Alignment.center,
-                              child: Text(GuidanceMessage.promptListIsEmpty,
+                              child: Text(GuidanceMessage.galleryIsEmpty,
                                 style: TextStyle(color: Colors.grey, letterSpacing: 2),
                               ),
                             )

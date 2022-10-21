@@ -79,19 +79,32 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           IconButton(
             onPressed: () async {
-              final scrollIndex = await Navigator.push(
+              final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => GalleryPage(title: widget.title),
+                  builder: (_) => GalleryPage(title: widget.title, searchWord: promptSearchTextController.text),
                   fullscreenDialog: true,
                 ),
               );
-              if (scrollIndex != null) {
-                isController.scrollTo(
-                    index: scrollIndex,
-                    duration: const Duration(seconds: 1),
-                    curve: Curves.easeOutQuint);
+              if (result != null) {
+                final scrollIndex = result[0];
+                final searchWord = result[1];
+                if (searchWord != null) {
+
+                  final repository = await PromptRepository.getInstance();
+                  repository.showSearchedPrompts(searchWord.split(','));
+                  setState(() {
+                    promptSearchTextController.text = searchWord;
+                  });
+                }
+                if (scrollIndex != null) {
+                  isController.scrollTo(
+                      index: scrollIndex,
+                      duration: const Duration(seconds: 1),
+                      curve: Curves.easeOutQuint);
+                }
               }
+
             },
             icon: const Icon(Icons.image),
           ),
