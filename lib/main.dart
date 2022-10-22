@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   @override
   Set<PointerDeviceKind> get dragDevices => {
-    PointerDeviceKind.touch, // 通常のタッチ入力デバイス
-    PointerDeviceKind.mouse, // これを追加！
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
   };
 }
