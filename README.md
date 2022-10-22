@@ -5,8 +5,12 @@ NovelAIに入力するprompt情報を管理するためのアプリケーショ�
 
 ![ai_org](https://user-images.githubusercontent.com/32704339/197323944-ad38d9cb-215b-45c6-9245-468413506d2b.JPG)
 
+## ソフトウェア本体のダウンロード
+
+https://github.com/yoshis777/ai_prompt_organizer/releases/tag/v1.0
+
 ## Usage
-できること一覧
+できること一覧です。
 
 #### 画像追加 / 基本操作
 <img src="https://user-images.githubusercontent.com/32704339/197325679-10287c0a-fff3-41fd-a2fe-fec207dc4b41.jpg" width="45%"><img src="https://user-images.githubusercontent.com/32704339/197325885-b50b312b-6a32-4c6e-9d49-75072e4644a2.jpg" width="45%">
