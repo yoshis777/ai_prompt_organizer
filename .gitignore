@@ -47,3 +47,4 @@ app.*.map.json
 !/lib
 !pubspec.yaml
 !pubspec.lock
+!README.md
