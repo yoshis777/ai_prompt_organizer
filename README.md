@@ -1,13 +1,10 @@
 # AI Prompt Organizer
 
-NovelAIに入力するprompt情報を管理するためのアプリケーションソフトです。Windows用。使用は自己責任でお願いします。  
+NovelAIに入力するprompt情報を管理するためのアプリケーションソフトです。Windows用。  
+使用は自己責任でお願いします。[ソフトウェア本体のDLはコチラから。](https://github.com/yoshis777/ai_prompt_organizer/releases/tag/v1.0)  
 拙いものですがソースコードは置いておきますので、Flutterに詳しい方は改変をご自由にどうぞです。
 
 ![ai_org](https://user-images.githubusercontent.com/32704339/197323944-ad38d9cb-215b-45c6-9245-468413506d2b.JPG)
-
-## ソフトウェア本体のダウンロード
-
-https://github.com/yoshis777/ai_prompt_organizer/releases/tag/v1.0
 
 ## Usage
 できること一覧です。
