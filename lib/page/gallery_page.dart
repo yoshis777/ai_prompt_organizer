@@ -26,7 +26,7 @@ class _GalleryPageState extends State<GalleryPage> {
     super.initState();
 
     Future(() async {
-      repository = await PromptRepository.getInstance();
+      repository = await IPromptRepository.getInstance();
       await getAllPrompts();
     });
   }
