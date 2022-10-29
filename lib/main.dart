@@ -8,7 +8,7 @@ import 'package:window_size/window_size.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows) {
-    setWindowTitle('AI Prompt Organizer');
+    setWindowTitle('AI Prompt Organizer v1.1');
     setWindowMinSize(const Size(1240, 600));
   }
 
