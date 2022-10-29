@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:ai_prompt_organizer/component/scroll_detector.dart';
 import 'package:ai_prompt_organizer/domain/schema/prompt.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../ai_prompt_organizer.dart';
@@ -39,6 +41,13 @@ class _FullScreenDialogPageState extends State<FullScreenDialogPage> {
     }
   }
 
+  void scrollIncrement(PointerScrollEvent event) {
+    setState(() {
+      if (event.scrollDelta.dy < 0) { decrement(); }
+      else if (event.scrollDelta.dy > 0) { increment(); }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -59,11 +68,13 @@ class _FullScreenDialogPageState extends State<FullScreenDialogPage> {
                   icon: const Icon(Icons.arrow_circle_left_outlined, color: Colors.grey)
               ),
               Expanded(
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context, [index]);
-                  },
-                  child: buildImageData(index),
+                child: ScrollDetector(onPointerScroll: scrollIncrement,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context, [index]);
+                    },
+                    child: buildImageData(index),
+                  ),
                 ),
               ),
               IconButton(
