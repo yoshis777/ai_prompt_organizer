@@ -421,7 +421,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
-      // TextFieldのlabelTextがconst指定なので関数化できない。とりあえず素で定義する
       child: TextField(
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
@@ -482,6 +481,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       maxLines: 1,
                       controller: seedTextController,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                        //LengthLimitingTextInputFormatter(11) //一応制限しないでおく
+                      ],
                       onChanged: (value) async {
                         bufferedTexts[PromptColumn.seed] = value;
                         isSeedEditing = true;
