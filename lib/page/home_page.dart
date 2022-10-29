@@ -44,6 +44,21 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isUcEditing = false;
   bool isDescriptionEditing = false;
 
+  @override
+  void initState() {
+    super.initState();
+
+    Future(() async {
+      await loadPromptFromDB(); // call first time only for registering event listener
+
+      final repository = await PromptRepository.getInstance();
+      List<Prompt>? list = repository.getAllPrompts();
+      if (list != null) {
+        promptList = list;
+      }
+    });
+  }
+
   Future<bool> loadPromptFromDB() async {
     final repository = await PromptRepository.getInstance();
 
@@ -51,23 +66,11 @@ class _MyHomePageState extends State<MyHomePage> {
       if (!mounted) {
         return;
       }
-
-      if (mounted) {
-        setState(() {
-          promptList = event.toList();
-          isInit = false;
-        });
-      }
+      setState(() {
+        promptList = event.toList();
+      });
     });
 
-    if (isInit) {
-      final list = repository.getAllPrompts();
-      if (list != null) {
-        promptList = list;
-        return true;
-      }
-      return false;
-    }
     return true;
   }
 

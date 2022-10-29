@@ -20,7 +20,23 @@ class GalleryPage extends StatefulWidget {
 class _GalleryPageState extends State<GalleryPage> {
   List<Prompt> promptList = List.empty();
   final promptSearchTextController = TextEditingController();
-  bool isInit = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future(() async {
+      final repository = await PromptRepository.getInstance();
+      List<Prompt>? list = repository.getAllPrompts();
+      if (widget.searchWord != null) {
+        promptSearchTextController.text = widget.searchWord!;
+        repository.showSearchedPrompts(widget.searchWord!.split(','));
+      }
+      if (list != null) {
+        promptList = list;
+      }
+    });
+  }
 
   Future<bool> loadPromptFromDB() async {
     final repository = await PromptRepository.getInstance();
@@ -31,23 +47,9 @@ class _GalleryPageState extends State<GalleryPage> {
       }
       setState(() {
         promptList = event.toList();
-        isInit = false;
       });
     });
 
-    if (isInit) {
-      List<Prompt>? list = repository.getAllPrompts();
-      if (widget.searchWord != null) {
-        promptSearchTextController.text = widget.searchWord!;
-        repository.showSearchedPrompts(widget.searchWord!.split(','));
-      }
-
-      if (list != null) {
-        promptList = list;
-        return true;
-      }
-      return false;
-    }
     return true;
   }
 
