@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ai_prompt_organizer/domain/prompt.dart';
 import 'package:flutter/material.dart';
 
 import '../ai_prompt_organizer.dart';
@@ -20,22 +21,28 @@ class GalleryPage extends StatefulWidget {
 class _GalleryPageState extends State<GalleryPage> {
   List<Prompt> promptList = List.empty();
   final promptSearchTextController = TextEditingController();
+  late IPromptRepository repository;
+  ScrollController scController = ScrollController();
 
   @override
   void initState() {
     super.initState();
 
     Future(() async {
-      final repository = await PromptRepository.getInstance();
-      List<Prompt>? list = repository.getAllPrompts();
-      if (widget.searchWord != null) {
-        promptSearchTextController.text = widget.searchWord!;
-        repository.showSearchedPrompts(widget.searchWord!.split(','));
-      }
-      if (list != null) {
-        promptList = list;
-      }
+      repository = await PromptRepository.getInstance();
+      await getAllPrompts();
     });
+  }
+
+  Future<void> getAllPrompts() async {
+    List<Prompt>? list = repository.getAllPrompts();
+    if (widget.searchWord != null) {
+      promptSearchTextController.text = widget.searchWord!;
+      repository.showSearchedPrompts(widget.searchWord!.split(','));
+    }
+    if (list != null) {
+      promptList = list;
+    }
   }
 
   Future<bool> loadPromptFromDB() async {
@@ -53,10 +60,33 @@ class _GalleryPageState extends State<GalleryPage> {
     return true;
   }
 
+  Future<void> scrollToTop() async {
+    if (promptList.isNotEmpty) {
+      scController.animateTo(
+        0,
+        duration: const Duration(seconds: 1), //移動するのに要する時間を設定
+        curve: Curves.easeOutQuint //アニメーションの種類を設定
+      );
+    }
+  }
+
+  Future<void> scrollToBottom() async {
+    if (promptList.isNotEmpty) {
+      scController.animateTo(
+          scController.position.maxScrollExtent,
+          duration: const Duration(seconds: 1), //移動するのに要する時間を設定
+          curve: Curves.easeOutQuint //アニメーションの種類を設定
+      );
+    }
+  }
+
+  Future<void> showSearchedPrompts(value) async {
+    final searchWords = value.split(',');
+    repository.showSearchedPrompts(searchWords);
+  }
+
   @override
   Widget build(BuildContext context) {
-    ScrollController scController = ScrollController();
-
     return WillPopScope(
       onWillPop: () {
         Navigator.pop(context, [null, promptSearchTextController.text]);
@@ -67,27 +97,11 @@ class _GalleryPageState extends State<GalleryPage> {
             title: const Text("Gallery Page"),
             actions: [
               IconButton(
-                onPressed: () async {
-                  if (promptList.isNotEmpty) {
-                    scController.animateTo(
-                        0,
-                        duration: const Duration(seconds: 1), //移動するのに要する時間を設定
-                        curve: Curves.easeOutQuint //アニメーションの種類を設定
-                    );
-                  }
-                },
+                onPressed: scrollToTop,
                 icon: const Icon(Icons.arrow_upward),
               ),
               IconButton(
-                onPressed: () async {
-                  if (promptList.isNotEmpty) {
-                    scController.animateTo(
-                        scController.position.maxScrollExtent,
-                        duration: const Duration(seconds: 1), //移動するのに要する時間を設定
-                        curve: Curves.easeOutQuint //アニメーションの種類を設定
-                    );
-                  }
-                },
+                onPressed: scrollToBottom,
                 icon: const Icon(Icons.arrow_downward),
               ),
               const SizedBox(width: 12),
@@ -105,11 +119,7 @@ class _GalleryPageState extends State<GalleryPage> {
                     ),
                     maxLines: 1,
                     controller: promptSearchTextController,
-                    onChanged: (value) async {
-                      final searchWords = value.split(',');
-                      final repository = await PromptRepository.getInstance();
-                      repository.showSearchedPrompts(searchWords);
-                    },
+                    onChanged: (value) => showSearchedPrompts(value),
                   ),
                 ),
               ),

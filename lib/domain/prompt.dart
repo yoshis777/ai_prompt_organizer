@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ai_prompt_organizer/ai_prompt_organizer.dart';
 import 'package:ai_prompt_organizer/util/db_util.dart';
 import 'package:realm/realm.dart';
@@ -6,10 +8,11 @@ import '../model/schema/prompt.dart';
 import '../repository/prompt_repository.dart';
 
 abstract class IPromptRepository {
-  static PromptRepository? _instance;
+  static IPromptRepository? _instance;
   static const dbFileName = AIPromptOrganizer.dbFileName;
+  late StreamController<RealmResults<Prompt>> streamController;
 
-  static Future<PromptRepository> getInstance() async {
+  static Future<IPromptRepository> getInstance() async {
     if (_instance == null) {
       var dbDir = await DBUtil.getDatabaseFolder();
 

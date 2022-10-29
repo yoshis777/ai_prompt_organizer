@@ -11,11 +11,12 @@ import '../util/db_util.dart';
 
 class PromptRepository implements IPromptRepository {
   Realm realm;
+  @override
   var streamController = StreamController<RealmResults<Prompt>>.broadcast();
 
   PromptRepository(this.realm);
 
-  static Future<PromptRepository> getInstance() async {
+  static Future<IPromptRepository> getInstance() async {
     return IPromptRepository.getInstance();
   }
 

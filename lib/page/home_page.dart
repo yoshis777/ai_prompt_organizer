@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ai_prompt_organizer/domain/prompt.dart';
 import 'package:ai_prompt_organizer/repository/prompt_repository.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/services.dart';
@@ -51,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Future(() async {
       await loadPromptFromDB(); // call first time only for registering event listener
 
-      final repository = await PromptRepository.getInstance();
+      final repository = await IPromptRepository.getInstance();
       List<Prompt>? list = repository.getAllPrompts();
       if (list != null) {
         promptList = list;
@@ -60,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<bool> loadPromptFromDB() async {
-    final repository = await PromptRepository.getInstance();
+    final repository = await IPromptRepository.getInstance();
 
     repository.streamController.stream.listen((event) {
       if (!mounted) {
