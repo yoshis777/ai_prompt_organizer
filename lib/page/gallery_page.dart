@@ -129,10 +129,11 @@ class _GalleryPageState extends State<GalleryPage> {
               child: Padding(
                 padding: const EdgeInsets.only(top:8),
                 child: buildGalleryPromptList(
-                    scController: scController,
-                    promptList: promptList,
-                    promptSearchTextController: promptSearchTextController,
-                    loadPromptFromDB: loadPromptFromDB)
+                  context: context,
+                  scController: scController,
+                  promptList: promptList,
+                  promptSearchTextController: promptSearchTextController,
+                  loadPromptFromDB: loadPromptFromDB)
               )
           )
       ),

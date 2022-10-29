@@ -6,9 +6,26 @@ import 'package:ai_prompt_organizer/page/full_screen_dialog_page.dart';
 import 'package:ai_prompt_organizer/util/db_util.dart';
 import 'package:flutter/material.dart';
 
-Widget buildGalleryPromptList({required ScrollController scController,
+Widget buildGalleryPromptList({
+  required BuildContext context,
+  required ScrollController scController,
   required List<Prompt> promptList, required TextEditingController promptSearchTextController,
   required Future<bool> Function() loadPromptFromDB}) {
+  const double imageWidth = 280;
+  const double imageHeight = 280;
+
+  void scrollTo(int index) {
+    final windowSize = MediaQuery.of(context).size;
+    final xImageNum = windowSize.width / (imageWidth + 4);
+    final yRow = (index / xImageNum).floor(); //y列目
+    final indexY = (imageHeight + 6) * yRow; //y軸の高さ
+
+    scController.animateTo(
+        indexY,
+        duration: const Duration(seconds: 1),
+        curve: Curves.easeOutQuint
+    );
+  }
 
   return SingleChildScrollView(
     controller: scController,
@@ -23,7 +40,7 @@ Widget buildGalleryPromptList({required ScrollController scController,
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 6, left: 4, right: 4),
                     child: Container(
-                        width: 280, height:280,
+                        width: imageWidth, height:imageHeight,
                         alignment: Alignment.center,
                         child: FutureBuilder(
                           future: DBUtil.getImageFullPath(prompt.value.imageData!.imagePath),
@@ -34,15 +51,19 @@ Widget buildGalleryPromptList({required ScrollController scController,
                                   alignment: Alignment.bottomRight,
                                   children: [
                                     GestureDetector(
-                                      onTap: () {
+                                      onTap: () async {
                                         if (prompt.value.imageData?.imagePath != null) {
-                                          Navigator.push(
+                                          final result = await Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (_) => FullScreenDialogPage(promptList: promptList, index: prompt.key),
                                               fullscreenDialog: true,
                                             ),
                                           );
+                                          if (result != null) {
+                                            final index = result[0];
+                                            scrollTo(index);
+                                          }
                                         }
                                       },
                                       child: Image.file(File(snapshot.data!)),
