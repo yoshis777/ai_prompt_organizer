@@ -6,7 +6,7 @@ import 'package:ai_prompt_organizer/page/full_screen_dialog_page.dart';
 import 'package:ai_prompt_organizer/util/db_util.dart';
 import 'package:flutter/material.dart';
 
-Widget buildGallaryPromptList({required ScrollController scController,
+Widget buildGalleryPromptList({required ScrollController scController,
   required List<Prompt> promptList, required TextEditingController promptSearchTextController,
   required Future<bool> Function() loadPromptFromDB}) {
 

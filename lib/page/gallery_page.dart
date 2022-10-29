@@ -128,7 +128,7 @@ class _GalleryPageState extends State<GalleryPage> {
               alignment: Alignment.topCenter,
               child: Padding(
                 padding: const EdgeInsets.only(top:8),
-                child: buildGallaryPromptList(
+                child: buildGalleryPromptList(
                     scController: scController,
                     promptList: promptList,
                     promptSearchTextController: promptSearchTextController,
