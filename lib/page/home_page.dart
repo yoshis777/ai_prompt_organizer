@@ -233,6 +233,40 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  void deleteTextField() {
+    promptSearchTextController.text = "";
+    showSearchedWords(promptSearchTextController.text);
+  }
+
+  Widget buildSearchTextField() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 6, left: 4, right: 4),
+      child: SizedBox(width: 200,
+        child: TextField(
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            alignLabelWithHint: true,
+            labelText: "search",
+            filled: true,
+            fillColor: Colors.white,
+            isDense: true,
+            suffixIcon: Align(
+              widthFactor: 1.0,
+              heightFactor: 1.0,
+              child: IconButton(
+                icon: const Icon(Icons.close_outlined),
+                onPressed: deleteTextField,
+              ),
+            ),
+          ),
+          maxLines: 1,
+          controller: promptSearchTextController,
+          onChanged: (value) => showSearchedWords(value),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -252,24 +286,7 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: const Icon(Icons.arrow_downward),
           ),
           const SizedBox(width: 12),
-          Padding(
-            padding: const EdgeInsets.only(top: 6, left: 4, right: 4),
-            child: SizedBox(width: 200,
-              child: TextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  alignLabelWithHint: true,
-                  labelText: "search",
-                  filled: true,
-                  fillColor: Colors.white,
-                  isDense: true,
-                ),
-                maxLines: 1,
-                controller: promptSearchTextController,
-                onChanged: (value) => showSearchedWords(value),
-              ),
-            ),
-          ),
+          buildSearchTextField(),
         ],
       ),
       body: buildImageDataDropZone(context),

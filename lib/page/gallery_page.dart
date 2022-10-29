@@ -82,6 +82,40 @@ class _GalleryPageState extends State<GalleryPage> {
     repository.showSearchedPrompts(searchWords);
   }
 
+  void deleteTextField() {
+    promptSearchTextController.text = "";
+    showSearchedPrompts(promptSearchTextController.text);
+  }
+
+  Widget buildSearchTextField() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 6, left: 4, right: 4),
+      child: SizedBox(width: 200,
+        child: TextField(
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            alignLabelWithHint: true,
+            labelText: "search",
+            filled: true,
+            fillColor: Colors.white,
+            isDense: true,
+            suffixIcon: Align(
+              widthFactor: 1.0,
+              heightFactor: 1.0,
+              child: IconButton(
+                icon: const Icon(Icons.close_outlined),
+                onPressed: deleteTextField,
+              ),
+            ),
+          ),
+          maxLines: 1,
+          controller: promptSearchTextController,
+          onChanged: (value) => showSearchedPrompts(value),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -102,24 +136,7 @@ class _GalleryPageState extends State<GalleryPage> {
                 icon: const Icon(Icons.arrow_downward),
               ),
               const SizedBox(width: 12),
-              Padding(
-                padding: const EdgeInsets.only(top: 6, left: 4, right: 4),
-                child: SizedBox(width: 200,
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      alignLabelWithHint: true,
-                      labelText: "search",
-                      filled: true,
-                      fillColor: Colors.white,
-                      isDense: true,
-                    ),
-                    maxLines: 1,
-                    controller: promptSearchTextController,
-                    onChanged: (value) => showSearchedPrompts(value),
-                  ),
-                ),
-              ),
+              buildSearchTextField(),
             ],
           ),
           body: Container(
