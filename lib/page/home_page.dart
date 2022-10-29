@@ -33,7 +33,6 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Prompt> promptList = List.empty();
   final List<String> imagePathList = List.empty();
   final promptSearchTextController = TextEditingController();
-  bool isInit = true;
   Map<PromptColumn, String> bufferedTexts = {
     PromptColumn.prompt: "",
     PromptColumn.seed: "",
