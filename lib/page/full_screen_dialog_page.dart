@@ -61,7 +61,7 @@ class _FullScreenDialogPageState extends State<FullScreenDialogPage> {
               Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.pop(context);
+                    Navigator.pop(context, [index]);
                   },
                   child: buildImageData(index),
                 ),

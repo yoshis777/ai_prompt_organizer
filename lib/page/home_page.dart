@@ -217,6 +217,22 @@ class _MyHomePageState extends State<MyHomePage> {
     return targetImgPath;
   }
 
+  Future<void> transitionToFullScreenDialog(BuildContext context, Prompt prompt, int index) async {
+    if (prompt.imageData?.imagePath != null) {
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => FullScreenDialogPage(promptList: promptList, index: index),
+          fullscreenDialog: true,
+        ),
+      );
+      if (result != null) {
+        final index = result[0];
+        scrollTo(index);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -340,15 +356,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             GestureDetector(
               onTap: () {
-                if (prompt.imageData?.imagePath != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => FullScreenDialogPage(promptList: promptList, index: index),
-                      fullscreenDialog: true,
-                    ),
-                  );
-                }
+                transitionToFullScreenDialog(context, prompt, index);
               },
               child: SizedBox(
                   width: 200, height:200,
