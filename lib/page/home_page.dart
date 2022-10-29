@@ -302,7 +302,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.only(top: 4, left: 4, right: 4),
-                        child: buildPromptWidget(context, promptList[index]),
+                        child: buildPromptWidget(context, promptList[index], index),
                       );
                     }
                 );
@@ -329,7 +329,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget buildPromptWidget(BuildContext context, Prompt prompt) {
+  Widget buildPromptWidget(BuildContext context, Prompt prompt, int index) {
 
     return Card(
       color: Colors.white70,
@@ -340,11 +340,11 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             GestureDetector(
               onTap: () {
-                if (prompt.imageData != null && prompt.imageData?.imagePath != null) {
+                if (prompt.imageData?.imagePath != null) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => FullScreenDialogPage(imagePath: prompt.imageData!.imagePath),
+                      builder: (_) => FullScreenDialogPage(promptList: promptList, index: index),
                       fullscreenDialog: true,
                     ),
                   );

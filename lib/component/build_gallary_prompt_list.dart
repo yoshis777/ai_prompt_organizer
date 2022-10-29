@@ -39,7 +39,7 @@ Widget buildGallaryPromptList({required ScrollController scController,
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (_) => FullScreenDialogPage(imagePath: prompt.value.imageData!.imagePath),
+                                              builder: (_) => FullScreenDialogPage(promptList: promptList, index: prompt.key),
                                               fullscreenDialog: true,
                                             ),
                                           );
