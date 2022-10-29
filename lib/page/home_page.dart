@@ -51,13 +51,15 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     Future(() async {
-      await loadPromptFromDB(); // call first time only for registering event listener
+      await loadPromptFromDB(); // リスナーを登録するために初回だけ呼び出す
 
       repository = await IPromptRepository.getInstance();
       await getAllPrompts();
     });
   }
 
+  // 関数群の定義。Providerパターンを適用してビジネスロジックは完全に分けたいが
+  // 非同期での状態遷移が多いのでとりあえず素の形にする
   Future<void> getAllPrompts() async {
     List<Prompt>? list = repository.getAllPrompts();
     if (list != null) {
@@ -394,6 +396,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
+      // TextFieldのlabelTextがconst指定なので関数化できない。とりあえず素で定義する
       child: TextField(
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
