@@ -5,49 +5,34 @@ import 'package:ai_prompt_organizer/ai_prompt_organizer.dart';
 import 'package:path/path.dart';
 import 'package:realm/realm.dart';
 
+import '../domain/prompt.dart';
 import '../model/schema/prompt.dart';
 import '../util/db_util.dart';
 
-class PromptRepository {
-  static PromptRepository? _instance;
-  static const dbFileName = AIPromptOrganizer.dbFileName;
-
+class PromptRepository implements IPromptRepository {
   Realm realm;
   var streamController = StreamController<RealmResults<Prompt>>.broadcast();
 
   PromptRepository(this.realm);
 
   static Future<PromptRepository> getInstance() async {
-    if (_instance == null) {
-      var dbDir = await DBUtil.getDatabaseFolder();
-
-      var config = Configuration.local(
-        [
-          Prompt.schema,
-          ImageData.schema,
-        ],
-        path: "${dbDir.path}/$dbFileName"
-      );
-
-      var realm = Realm(config);
-      _instance = PromptRepository(realm);
-    }
-
-    return _instance!;
+    return IPromptRepository.getInstance();
   }
 
+  @override
   List<Prompt>? getAllPrompts() {
     if (realm.isClosed) {
       return null;
     }
-
     return realm.query<Prompt>("TRUEPREDICATE SORT(createdAt DESC)").toList();
   }
 
+  @override
   RealmResults<Prompt> getAllResults() {
     return realm.query<Prompt>("TRUEPREDICATE SORT(createdAt DESC)");
   }
 
+  @override
   void showSearchedPrompts(List<String> keywords) {
     if (realm.isClosed) {
       return;
@@ -59,6 +44,7 @@ class PromptRepository {
     streamController.sink.add(results);
   }
 
+  @override
   void addPrompt(Prompt prompt) {
     if (realm.isClosed) {
       return;
@@ -71,6 +57,7 @@ class PromptRepository {
     });
   }
 
+  @override
   void update(void Function() callback) {
     if (realm.isClosed) {
       return;
@@ -81,8 +68,9 @@ class PromptRepository {
     });
   }
 
+  @override
   Future<void> deletePromptImageFile(Prompt prompt) async {
-    if (prompt.imageData != null && prompt.imageData?.imagePath != null) {
+    if (prompt.imageData?.imagePath != null) {
       final deleteFile = File(await DBUtil.getImageFullPath(prompt.imageData!.imagePath));
       try {
         if (await deleteFile.exists()) {
@@ -94,6 +82,7 @@ class PromptRepository {
     }
   }
 
+  @override
   Future<void> deletePrompt(Prompt prompt) async {
     if (realm.isClosed) {
       return;
