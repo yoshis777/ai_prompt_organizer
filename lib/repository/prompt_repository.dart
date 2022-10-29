@@ -6,7 +6,7 @@ import 'package:path/path.dart';
 import 'package:realm/realm.dart';
 
 import '../domain/prompt.dart';
-import '../model/schema/prompt.dart';
+import '../domain/schema/prompt.dart';
 import '../util/db_util.dart';
 
 class PromptRepository implements IPromptRepository {

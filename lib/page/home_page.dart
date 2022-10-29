@@ -13,7 +13,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../ai_prompt_organizer.dart';
 import '../component/ai_option_dropdowns.dart';
 import '../component/delete_alert_dialog.dart';
-import '../model/schema/prompt.dart';
+import '../domain/schema/prompt.dart';
 import '../util/db_util.dart';
 import 'full_screen_dialog_page.dart';
 import 'gallery_page.dart';

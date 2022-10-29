@@ -4,7 +4,7 @@ import 'package:ai_prompt_organizer/ai_prompt_organizer.dart';
 import 'package:ai_prompt_organizer/util/db_util.dart';
 import 'package:realm/realm.dart';
 
-import '../model/schema/prompt.dart';
+import 'schema/prompt.dart';
 import '../repository/prompt_repository.dart';
 
 abstract class IPromptRepository {
@@ -37,5 +37,4 @@ abstract class IPromptRepository {
   void update(void Function() callback);
   Future<void> deletePromptImageFile(Prompt prompt);
   Future<void> deletePrompt(Prompt prompt);
-
 }

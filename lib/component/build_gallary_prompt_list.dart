@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:ai_prompt_organizer/ai_prompt_organizer.dart';
-import 'package:ai_prompt_organizer/model/schema/prompt.dart';
+import 'package:ai_prompt_organizer/domain/schema/prompt.dart';
 import 'package:ai_prompt_organizer/page/full_screen_dialog_page.dart';
 import 'package:ai_prompt_organizer/util/db_util.dart';
 import 'package:flutter/material.dart';

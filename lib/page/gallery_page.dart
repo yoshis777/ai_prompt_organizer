@@ -2,7 +2,7 @@ import 'package:ai_prompt_organizer/component/build_gallary_prompt_list.dart';
 import 'package:ai_prompt_organizer/domain/prompt.dart';
 import 'package:flutter/material.dart';
 
-import '../model/schema/prompt.dart';
+import '../domain/schema/prompt.dart';
 import '../repository/prompt_repository.dart';
 
 
