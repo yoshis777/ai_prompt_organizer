@@ -16,9 +16,9 @@ Widget buildGalleryPromptList({
 
   void scrollTo(int index) {
     final windowSize = MediaQuery.of(context).size;
-    final xImageNum = windowSize.width / (imageWidth + 4);
-    final yRow = (index / xImageNum).floor(); //y列目
-    final indexY = (imageHeight + 6) * yRow; //y軸の高さ
+    final xImageNum = (windowSize.width / (imageWidth + 4)).floor();
+    final row = (index / xImageNum).floor(); //y列目
+    final indexY = (imageHeight + 6) * row; //y軸の高さ
 
     scController.animateTo(
         indexY,
