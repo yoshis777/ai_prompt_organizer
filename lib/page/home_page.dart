@@ -57,7 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  // 関数群の定義。Providerパターンを適用してビジネスロジックは完全に分けたいが
+  // 関数群の定義。Providerパターンを適用してビジネスロジックは完全に分けつつ、
+  // Widgetツリーを形成してファイルも分けたいが、
   // 非同期での状態遷移が多いのでとりあえず素の形にする
   Future<void> getAllPrompts() async {
     List<Prompt>? list = repository.getAllPrompts();
