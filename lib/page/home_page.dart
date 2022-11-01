@@ -200,9 +200,17 @@ class _MyHomePageState extends State<MyHomePage> {
       Prompt latest = promptList[0];
       takeOverSomeColumns(prompt, latest);
     }
+    final seed = seedInFilePath(targetImgPath);
+    if (seed != null) {
+      prompt.seed = seed;
+    }
     prompt.imageData = ImageData(Uuid.v4(), targetImgPath);
     final repository = await PromptRepository.getInstance();
     repository.addPrompt(prompt);
+  }
+
+  String? seedInFilePath(String filepath) {
+    return RegExp(r's-([0-9]+)\.').firstMatch(basename(filepath))?.group(1);
   }
 
   Future<String> copyImageFile(String imagePath) async {
