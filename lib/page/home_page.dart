@@ -33,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Prompt> promptList = List.empty();
   final List<String> imagePathList = List.empty();
   final promptSearchTextController = TextEditingController();
+  Prompt? copiedPrompt;
   Map<PromptColumn, String> bufferedTexts = {
     PromptColumn.prompt: "",
     PromptColumn.seed: "",
@@ -168,11 +169,31 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void removeCurrentSnackBar(BuildContext context) {
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    unselectCopiedPrompt(context);
+  }
+
   void showErrorSnackBar(BuildContext context, e) {
+    removeCurrentSnackBar(context);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(e.toString()),
       duration: const Duration(seconds: 3),
       backgroundColor: Colors.red,
+    ));
+  }
+
+  void showCopiedPromptSnackBar(BuildContext context, index) {
+    removeCurrentSnackBar(context);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: GestureDetector(
+        onTap: () {
+          unselectCopiedPrompt(context);
+        },
+        child: Text("画像追加時に${promptNumber(index)}番のprompt情報を自動入力します。（ココをクリックするとキャンセルします）"),
+      ),
+      duration: const Duration(days: 1),
+      backgroundColor: Colors.black,
     ));
   }
 
@@ -200,9 +221,21 @@ class _MyHomePageState extends State<MyHomePage> {
       Prompt latest = promptList[0];
       takeOverSomeColumns(prompt, latest);
     }
+    if (copiedPrompt != null) {
+      takeOverSomeColumns(prompt, copiedPrompt!);
+      prompt.prompt = copiedPrompt!.prompt;
+    }
+    final seed = seedInFilePath(targetImgPath);
+    if (seed != null) {
+      prompt.seed = seed;
+    }
     prompt.imageData = ImageData(Uuid.v4(), targetImgPath);
     final repository = await PromptRepository.getInstance();
     repository.addPrompt(prompt);
+  }
+
+  String? seedInFilePath(String filepath) {
+    return RegExp(r's-([0-9]+)\.').firstMatch(basename(filepath))?.group(1);
   }
 
   Future<String> copyImageFile(String imagePath) async {
@@ -236,6 +269,16 @@ class _MyHomePageState extends State<MyHomePage> {
   void deleteTextField() {
     promptSearchTextController.text = "";
     showSearchedWords(promptSearchTextController.text);
+  }
+
+  void selectCopiedPrompt(BuildContext context, Prompt prompt, int index) {
+    showCopiedPromptSnackBar(context, index);
+    copiedPrompt = prompt;
+  }
+
+  void unselectCopiedPrompt(BuildContext context) {
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    copiedPrompt = null;
   }
 
   Widget buildSearchTextField() {
@@ -300,6 +343,10 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  String promptNumber(int index) {
+    return (promptList.length - index).toString();
+  }
+
   Widget buildImageDataDropZone(BuildContext context) {
     return DropTarget(
       onDragDone: (details) async {
@@ -335,7 +382,15 @@ class _MyHomePageState extends State<MyHomePage> {
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.only(top: 4, left: 4, right: 4),
-                        child: buildPromptWidget(context, promptList[index], index),
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            buildPromptWidget(context, promptList[index], index),
+                            Padding(padding: const EdgeInsets.only(right:12, bottom: 12),
+                              child: Text(promptNumber(index)),
+                            ),
+                          ],
+                        ),
                       );
                     }
                 );
@@ -405,7 +460,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   const SizedBox(width: double.infinity),
                   buildPromptDataForm(context, prompt),
-                  buildOtherDataForms(context, prompt),
+                  buildOtherDataForms(context, prompt, index),
                 ]
               ),
             ),
@@ -447,7 +502,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget buildOtherDataForms(BuildContext context, Prompt prompt) {
+  Widget buildOtherDataForms(BuildContext context, Prompt prompt, int index) {
     final ucTextController = TextEditingController();
     ucTextController.text = prompt.uc;
     final seedTextController = TextEditingController();
@@ -729,24 +784,27 @@ class _MyHomePageState extends State<MyHomePage> {
         const SizedBox(width: 4),
         Column(crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 120,
-              alignment: Alignment.bottomCenter,
-              child: IconButton(
-                onPressed: () async {
-                  showDialog(
-                      context: context,
-                      builder: ((_) {
-                        return const DeleteAlertDialog();
-                      })).then((value) {
-                    if (value == null) {
-                      return;
-                    }
-                    deletePrompt(context, prompt);
-                  });
-                },
-                icon: const Icon(Icons.delete),
-              ),
+            const SizedBox(height: 40),
+            IconButton(
+              onPressed: () {
+                selectCopiedPrompt(context, prompt, index);
+              },
+              icon: const Icon(Icons.copy)
+            ),
+            IconButton(
+              onPressed: () async {
+                showDialog(
+                    context: context,
+                    builder: ((_) {
+                      return const DeleteAlertDialog();
+                    })).then((value) {
+                  if (value == null) {
+                    return;
+                  }
+                  deletePrompt(context, prompt);
+                });
+              },
+              icon: const Icon(Icons.delete),
             ),
           ],
         ),
