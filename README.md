@@ -1,7 +1,7 @@
 # AI Prompt Organizer
 
 NovelAIに入力するprompt情報を管理するためのアプリケーションソフトです。Windows用。  
-使用は自己責任でお願いします。[ソフトウェア本体のDLはコチラから。](https://github.com/yoshis777/ai_prompt_organizer/releases/tag/v1.0)  
+使用は自己責任でお願いします。[ソフトウェア本体のDLはコチラから。](https://github.com/yoshis777/ai_prompt_organizer/releases/latest/)  
 拙いものですがソースコードは置いておきますので、Flutterに詳しい方は改変をご自由にどうぞです。
 
 ![ai_org](https://user-images.githubusercontent.com/32704339/197323944-ad38d9cb-215b-45c6-9245-468413506d2b.JPG)
@@ -33,3 +33,18 @@ NovelAIに入力するprompt情報を管理するためのアプリケーショ�
   * prompt, descriptionは部分一致検索
   * seedは全一致検索
   * キーワードをコンマで区切るとAND検索(1girl, anime)
+## 移行方法
+v1.1のzipファイルを解凍し、[ai_prompt_organizer.exe]があるフォルダに  
+v1.0の[organizer_db]フォルダをまるごとコピーしてから起動するとv1.0のデータを使用できます。
+## 更新履歴
+### v1.2 (2022/11/02)
+* NovelAIから出力した画像ファイルであれば、画像追加時にseed値を自動入力するように対応
+* 登録済みのprompt情報に整理番号を付与
+* 登録済みのprompt情報を選択して、画像追加時にprompt情報をコピーできるように対応
+### v1.1（2022/10/30）
+* 画像１枚表示画面で、以下で前後の画像に移動できるように（windowsフォトアプリの操作感）
+  * 進むボタン戻るボタンを押下する
+  * マウスホイールを前後する
+* 画像１枚表示画面から前のページに戻った場合、指定の画像にスクロールするように対応
+* 検索ボックスにテキスト削除ボタンを追加
+* seedは数字入力のみ許可するように対応
