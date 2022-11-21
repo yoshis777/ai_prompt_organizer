@@ -7,6 +7,9 @@ import 'package:realm/realm.dart';
 import 'schema/prompt.dart';
 import '../repository/prompt_repository.dart';
 
+// usecase用インターフェース
+
+// repository用インターフェース
 abstract class IPromptRepository {
   static IPromptRepository? _instance;
   static const dbFileName = AIPromptOrganizer.dbFileName;
